@@ -11,6 +11,7 @@ module D3
   , attr, style, property   -- : String -> (a -> Int -> String) -> Selection a
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
   , html , text             -- : (a -> Int -> String) -> Selection a
+  , str, num                -- : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
   ) where
 
 import Native.D3.Render
@@ -96,6 +97,12 @@ html fn = Native.D3.Selection.html (safeEvaluator fn)
 
 text : (a -> Int -> String) -> Selection a
 text fn = Native.D3.Selection.text (safeEvaluator fn)
+
+num : (String -> (a -> Int -> String) -> Selection a) -> String -> number -> Selection a
+num a name v = a name (\_ _ -> show v)
+
+str : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
+str a name v = a name (\_ _ -> v)
 
 -------------------------------------------------------------------------------
 -- Internal functions
