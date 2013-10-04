@@ -1,5 +1,4 @@
-Elm.Native.D3 = Elm.Native.D3 || {};
-Elm.Native.D3.Render = Elm.Native.D3.Render || {};
+Elm.Native.D3.Render = {};
 Elm.Native.D3.Render.make = function(elm) {
   'use strict';
 
