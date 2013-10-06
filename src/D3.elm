@@ -12,10 +12,14 @@ module D3
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
   , html , text             -- : (a -> Int -> String) -> Selection a
   , str, num                -- : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
+  , transition              -- : Selection a
+  , delay                   -- : (a -> Int -> Int) -> Selection a
+  , duration                -- : (a -> Int -> Int) -> Selection a
   ) where
 
 import Native.D3.Render
 import Native.D3.Selection
+import Native.D3.Transition
 import String
 import JavaScript
 
@@ -105,7 +109,20 @@ str : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Sel
 str a name v = a name (\_ _ -> v)
 
 -------------------------------------------------------------------------------
+-- Transition
+
+transition : Selection a
+transition = Native.D3.Transition.transition
+
+delay : (a -> Int -> Int) -> Selection a
+delay fn = Native.D3.Transition.delay (safeTransition fn)
+
+duration : (a -> Int -> Int) -> Selection a
+duration fn = Native.D3.Transition.duration (safeTransition fn)
+
+-------------------------------------------------------------------------------
 -- Internal functions
 
 safeEvaluator fn a i = JavaScript.fromString (fn a (JavaScript.toInt i))
 safePredicate fn a i = JavaScript.fromBool (fn a (JavaScript.toInt i))
+safeTransition fn a i = JavaScript.fromInt (fn a (JavaScript.toInt i))
