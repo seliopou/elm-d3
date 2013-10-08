@@ -1,3 +1,5 @@
+import "../cast"
+
 Elm.Native.D3.Selection = {};
 Elm.Native.D3.Selection.make = function(elm) {
   'use strict';
@@ -38,12 +40,6 @@ Elm.Native.D3.Selection.make = function(elm) {
   if (elm.Native.D3.Selection.values) return elm.Native.D3.Selection.values;
 
   function id(x) { return x; }
-
-  function safeValfn(valfn) {
-    return typeof valfn == 'function'
-      ? function(d, i) { return valfn(d)(i); }
-      : valfn;
-  };
 
   function elm_sequence(s1, s2) {
     return function(k, selection) {
