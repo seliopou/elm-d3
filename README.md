@@ -9,10 +9,8 @@ code statically typed, pure, and, reactive, and your widgets composable.
 ## Installation
 
 First make sure that you have [node.js][node] installed, as well as the
-[Elm][elm] compiler. Note that elm-d3 currently requires that you install the
-compiler from the [current development branch][dev]. Once you've installed
-those dependencies, clone the elm-d3 repository and run the following commands
-from the root directory:
+[Elm][elm] compiler. Once you've installed those dependencies, clone the elm-d3
+repository and run the following commands from the root directory:
 
     npm install smash
     make
@@ -22,7 +20,6 @@ root directory of the elm-d3 repository. They'll come in handy later.
 
 [node]: http://nodejs.org/
 [elm]: https://github.com/evancz/elm
-[dev]: https://github.com/evancz/elm/tree/dev
 [smash]: https://github.com/mbostock/smash
 
 * `elm-d3.library.js`: contains all compiled code;
@@ -169,18 +166,6 @@ Each function is preceded by a comment describing the equivalent expression in
 JavaScript. Types are also very instructive.
 
 [d3elm]: https://github.com/seliopou/elm-d3/blob/master/src/D3.elm
-
-# Compatibility
-
-Curently elm-d3 requires that you use the [current development branch][dev] of
-the Elm compiler. The dev branch supports the `--src-dir` compiler flags that
-the Makefile uses. This flag also makes it easier to use the elm-d3 library in
-other projects without duplicating code.
-
-Besides that, elm-d3 uses the new efficent String library that will be included
-in the next release. In addition, the native code included in this library uses
-also uses the new API for module initialization, which makes it incompatible
-with previous compiler versions.
 
 # License
 
