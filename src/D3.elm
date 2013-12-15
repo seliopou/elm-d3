@@ -21,13 +21,12 @@ import Native.D3.Render
 import Native.D3.Selection
 import Native.D3.Transition
 import String
-import JavaScript
 
 
 data Selection a = Selection
 
 version : String
-version = JavaScript.toString Native.D3.version
+version = Native.D3.version
 
 -------------------------------------------------------------------------------
 -- Selection-to-Runtime API
@@ -87,7 +86,7 @@ infixl 4 |.
 --   context.select(selector);
 -- 
 select : String -> Selection a
-select = Native.D3.Selection.select . JavaScript.fromString
+select = Native.D3.Selection.select
 
 -- Create a multi-element (or empty) selection given a css selector.
 --
@@ -98,7 +97,7 @@ select = Native.D3.Selection.select . JavaScript.fromString
 --   context.selectAll(selector);
 -- 
 selectAll : String -> Selection a
-selectAll = Native.D3.Selection.selectAll . JavaScript.fromString
+selectAll = Native.D3.Selection.selectAll
 
 -- Append a DOM element.
 --
@@ -109,7 +108,7 @@ selectAll = Native.D3.Selection.selectAll . JavaScript.fromString
 --   context.append(element);
 --
 append : String -> Selection a
-append = Native.D3.Selection.append . JavaScript.fromString
+append = Native.D3.Selection.append
 
 -- Remove the current context.
 --
@@ -135,7 +134,7 @@ remove = Native.D3.Selection.remove
 --   bound.exit().call(s3);
 --   
 bind : (a -> [b]) -> Selection b -> Selection b -> Selection b -> Selection a
-bind fn = Native.D3.Selection.bind (JavaScript.fromList . fn)
+bind = Native.D3.Selection.bind
 
 -- Create an enter selection.
 --
@@ -185,8 +184,7 @@ exit = Native.D3.Selection.exit
 --   context.attr(name, fn);
 --
 attr : String -> (a -> Int -> String) -> Selection a
-attr name fn =
-  Native.D3.Selection.attr (JavaScript.fromString name) (safeEvaluator fn)
+attr = Native.D3.Selection.attr
 
 -- Set a style property to the per-element value determined by `fn`.
 --
@@ -197,8 +195,7 @@ attr name fn =
 --   context.style(name, fn);
 --
 style : String -> (a -> Int -> String) -> Selection a
-style name fn =
-  Native.D3.Selection.style (JavaScript.fromString name) (safeEvaluator fn)
+style = Native.D3.Selection.style
 
 -- Set a DOM object property to the per-element value determined by `fn`.
 --
@@ -209,8 +206,7 @@ style name fn =
 --   context.property(name, fn);
 --
 property : String -> (a -> Int -> String) -> Selection a
-property name fn =
-  Native.D3.Selection.property (JavaScript.fromString name) (safeEvaluator fn)
+property = Native.D3.Selection.property
 
 -- Include or exclude the class on each element depending on the result of `fn`.
 --
@@ -221,8 +217,7 @@ property name fn =
 --   context.classed(name, fn);
 --
 classed : String -> (a -> Int -> Bool) -> Selection a
-classed name fn =
-  Native.D3.Selection.classed (JavaScript.fromString name) (safePredicate fn)
+classed = Native.D3.Selection.classed
 
 -- Set the HTML content of each element as determined by `fn`.
 --
@@ -233,7 +228,7 @@ classed name fn =
 --   context.html(fn);
 --
 html : (a -> Int -> String) -> Selection a
-html fn = Native.D3.Selection.html (safeEvaluator fn)
+html = Native.D3.Selection.html
 
 -- Set the text content of each element as determined by `fn`.
 --
@@ -244,7 +239,7 @@ html fn = Native.D3.Selection.html (safeEvaluator fn)
 --   context.text(fn);
 --
 text : (a -> Int -> String) -> Selection a
-text fn = Native.D3.Selection.text (safeEvaluator fn)
+text = Native.D3.Selection.text
 
 -- String casting helper for attr and similar functions.
 --
@@ -291,7 +286,7 @@ transition = Native.D3.Transition.transition
 --   context.delay(fn);
 --
 delay : (a -> Int -> Int) -> Selection a
-delay fn = Native.D3.Transition.delay (safeTransition fn)
+delay = Native.D3.Transition.delay
 
 -- Set the per-element duration of a transition.
 --
@@ -302,11 +297,4 @@ delay fn = Native.D3.Transition.delay (safeTransition fn)
 --   context.delay(fn);
 --
 duration : (a -> Int -> Int) -> Selection a
-duration fn = Native.D3.Transition.duration (safeTransition fn)
-
--------------------------------------------------------------------------------
--- Internal functions
-
-safeEvaluator fn a i = JavaScript.fromString (fn a (JavaScript.toInt i))
-safePredicate fn a i = JavaScript.fromBool (fn a (JavaScript.toInt i))
-safeTransition fn a i = JavaScript.fromInt (fn a (JavaScript.toInt i))
+duration = Native.D3.Transition.duration

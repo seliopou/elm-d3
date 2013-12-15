@@ -1,5 +1,5 @@
-function safeValfn(valfn) {
+function safeValfn(valfn, caster) {
   return typeof valfn == 'function'
-    ? function(d, i) { return valfn(d)(i); }
+    ? caster(valfn)
     : valfn;
 };

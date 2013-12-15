@@ -7,43 +7,43 @@ Elm.Native.D3.Color.make = function(elm) {
   elm.Native.D3.Color = elm.Native.D3.Color || {};
   if (elm.Native.D3.Color.values) return elm.Native.D3.Color.values;
 
-  function elm_convert(typ) {
-    return function(color) {
-      return typeof color[typ] == 'function' ? color[typ]() : d3[typ](color);
-    };
+  var JS = Elm.Native.JavaScript.make(elm);
+
+
+  function elm_create(typ, a, b, c) {
+    return d3[typ](JS.fromInt(a), JS.fromInt(b), JS.fromInt(c));
+  }
+
+  function elm_convert(typ, color) {
+    var c = typeof color[typ] == 'function' ? color[typ]() : d3[typ](color),
+        o = {};
+
+    for (var i in typ) o[typ[i]] = c[i];
+    return JS.toRecord(o);
+  }
+
+  function elm_fromString(str) {
+    return d3.rgb(JS.fromString(str));
   }
 
   function elm_toString(color) {
-    return color.toString();
+    return JS.toString(color.toString());
   }
 
   function elm_brighter(amount, color) {
-    return color.brighter(amount);
+    return color.brighter(JS.fromFloat(amount));
   }
 
   function elm_darker(amount, color) {
-    return color.darker(amount);
-  }
-
-  // XXX: This belongs in the JavaScript FFI
-  function elm_get(attr, object) {
-    return object[attr];
+    return color.darker(JS.fromFloat(amount));
   }
 
   return elm.Native.D3.Color.values = {
-    fromRGB : F3(d3.rgb),
-    toRGB : elm_convert('rgb'),
-    fromHSL : F3(d3.hsl),
-    toHSL : elm_convert('hsl'),
-    fromHCL : F3(d3.hcl),
-    toHCL : elm_convert('hcl'),
-    fromLAB : F3(d3.lab),
-    toLAB : elm_convert('lab'),
+    create : F4(elm_create),
+    convert : F2(elm_convert),
     brighter : F2(elm_brighter),
     darker : F2(elm_darker),
-    fromString : d3.rgb,
+    fromString : elm_fromString,
     toString : elm_toString,
-
-    get : F2(elm_get),
   };
 };

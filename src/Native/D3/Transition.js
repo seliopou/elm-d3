@@ -9,12 +9,21 @@ Elm.Native.D3.Transition.make = function(elm) {
   elm.Native.D3.Transition = elm.Native.D3.Transition || {};
   if (elm.Native.D3.Transition.values) return elm.Native.D3.Transition.values;
 
+  var JS = Elm.Native.JavaScript.make(elm);
+
+
+  function safeTransition(fn) {
+    return function (a, i) {
+      return JS.fromInt(A2(fn, a, JS.toInt(i)));
+    };
+  }
+
   function elm_transition(k, selection) {
     return k(selection.transition());
   }
 
   function elm_delay(valfn) {
-    valfn = safeValfn(valfn);
+    valfn = safeValfn(valfn, safeTransition);
     return function(k, selection) {
       return k(selection.delay(valfn));
     };

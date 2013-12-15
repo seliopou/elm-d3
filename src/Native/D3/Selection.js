@@ -39,6 +39,21 @@ Elm.Native.D3.Selection.make = function(elm) {
   elm.Native.D3.Selection = elm.Native.D3.Selection || {};
   if (elm.Native.D3.Selection.values) return elm.Native.D3.Selection.values;
 
+  var JS = Elm.Native.JavaScript.make(elm);
+
+
+  function safeEvaluator(fn) {
+    return function (a, i) {
+      return JS.fromString(A2(fn, a, JS.toInt(i)));
+    };
+  }
+
+  function safePredicate(fn) {
+    return function (a, i) {
+      return JS.fromBool(A2(fn, a, JS.toInt(i)));
+    };
+  }
+
   function id(x) { return x; }
 
   function elm_sequence(s1, s2) {
@@ -58,18 +73,21 @@ Elm.Native.D3.Selection.make = function(elm) {
   }
 
   function elm_select(selector) {
+    var selector = JS.fromString(selector);
     return function(k, selection) {
       return k(selection.select(selector));
     };
   }
 
   function elm_selectAll(selector) {
+    var selector = JS.fromString(selector);
     return function(k, selection) {
       return k(selection.selectAll(selector));
     };
   }
 
   function elm_append(element) {
+    var element = JS.fromString(element);
     return function(k, selection) {
       return k(selection.append(element));
     };
@@ -77,7 +95,7 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   function elm_bind(fn, enter, update, exit) {
     return function(k, selection) {
-      var bind  = selection.data(fn);
+      var bind  = selection.data(function (d) { return JS.fromList(fn(d)); });
 
       enter(id, bind.enter());
       update(id, bind);
@@ -104,49 +122,53 @@ Elm.Native.D3.Selection.make = function(elm) {
   }
 
   function elm_classed(name, valfn) {
-    valfn = safeValfn(valfn);
+    name = JS.fromString(name);
+    valfn = safeValfn(valfn, safePredicate);
     return function(k, selection) {
       return k(selection.classed(name, valfn));
     };
   }
 
   function elm_attr(name, valfn) {
-    valfn = safeValfn(valfn);
+    name = JS.fromString(name);
+    valfn = safeValfn(valfn, safeEvaluator);
     return function(k, selection) {
       return k(selection.attr(name, valfn));
     };
   }
 
   function elm_style(name, valfn) {
-    valfn = safeValfn(valfn);
+    name = JS.fromString(name);
+    valfn = safeValfn(valfn, safeEvaluator);
     return function(k, selection) {
       return k(selection.style(name, valfn));
     };
   }
 
   function elm_property(name, valfn) {
-    valfn = safeValfn(valfn);
+    name = JS.fromString(name);
+    valfn = safeValfn(valfn, safeEvaluator);
     return function(k, selection) {
       return k(selection.property(name, valfn));
     };
   }
 
   function elm_html(valfn) {
-    valfn = safeValfn(valfn);
+    valfn = safeValfn(valfn, safeEvaluator);
     return function(k, selection) {
       return k(selection.html(valfn));
     };
   }
 
   function elm_text(valfn) {
-    valfn = safeValfn(valfn);
+    valfn = safeValfn(valfn, safeEvaluator);
     return function(k, selection) {
       return k(selection.text(valfn));
     };
   }
 
   return elm.Native.D3.values = {
-    version : d3.version,
+    version : JS.toString(d3.version),
     sequence : F2(elm_sequence),
     chain : F2(elm_chain),
     select : elm_select,
