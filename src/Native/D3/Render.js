@@ -21,18 +21,19 @@ Elm.Native.D3.Render.make = function(elm) {
     var root = d3.select('body')
       .append('div')
       .datum(model.datum);
+    var node = root.node();
 
-    model.node = run(model.root).apply(root);
-    model.node.call(run(model.selection));
+    node.__node = run(model.root).apply(root);
+    node.__node.call(run(model.selection));
 
-    return root.node();
+    return node;
   }
 
   function update(node, _old, _new) {
     d3.select(node).datum(_new.datum);
-    _new.node = _old.node
-      .datum(_new.datum)
-      .call(run(_new.selection));
+    node.__node
+        .datum(_new.datum)
+        .call(run(_new.selection));
 
     return true;
   }
