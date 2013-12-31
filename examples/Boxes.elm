@@ -19,25 +19,23 @@ svg ds ms =
   |. append "g"
      |. str attr "transform" (translate margin.left margin.top)
 
-boxes : Selection (number, number)
-boxes = 
+boxes : Widget (number, number) (number, number, String)
+boxes =
   selectAll ".box"
-  |. bind (\(x, y) -> [(x, 0, "cyan"), (0, y, "magenta")])
-     -- enter
-     (append "rect"
-     |. str attr "class" "box"
-     |. num attr "width"  100
-     |. num attr "height" 100
-     |. attr     "fill"   (\(_, _, c) _ -> c))
-     -- update
-     (update
-     |. attr "x" (\(x, _, _) _ -> show x)
-     |. attr "y" (\(_, y, _) _ -> show y))
-     -- exit
-     remove
+  |= (\(x, y) -> [(x, 0, "cyan"), (0, y, "magenta")])
+     |- enter <.> append "rect"
+        |. str attr "class" "box"
+        |. num attr "width"  100
+        |. num attr "height" 100
+        |. attr     "fill"   (\(_, _, c) _ -> c)
+     |- update
+        |. attr "x" (\(x, _, _) _ -> show x)
+        |. attr "y" (\(_, y, _) _ -> show y)
+     |- exit
+        |. remove
 
 translate : number -> number -> String
 translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
 main : Signal Element
-main = render dims.height dims.width (svg dims margin) boxes <~ Mouse.position
+main = render dims.height dims.width (svg dims margin) (embed boxes) <~ Mouse.position

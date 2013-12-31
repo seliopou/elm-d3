@@ -22,22 +22,21 @@ svg ds ms =
 
 -- Move the mouse to the left to right to remove or add circles. Move the mouse
 -- up and down to change the brightness of the circles.
-circles : Selection (number, number)
+circles : Widget (number, number) number
 circles =
   selectAll "circle"
-  |. bind (\(x, y) -> repeat (x `div` 50) y)
-     --enter
-     (append "circle"
-     |. attr     "fill" color
-     |. num attr "r"    0
-     |. num attr "cy"   150
-     |. attr     "cx"   (\_ i -> show (25 + 50 * i))
-     |. transition
-        |. num attr "r" 25)
-     -- update
-     (attr "fill" color)
-     -- exit
-     remove
+  |= (\(x, y) -> repeat (x `div` 50) y)
+     |- enter <.> append "circle"
+        |. attr     "fill" color
+        |. num attr "r"    0
+        |. num attr "cy"   150
+        |. attr     "cx"   (\_ i -> show (25 + 50 * i))
+        |. transition
+           |. num attr "r" 25
+     |- update
+        |. attr "fill" color
+     |- exit
+        |. remove
 
 color : number -> number -> String
 color y i =
@@ -49,4 +48,4 @@ translate : number -> number -> String
 translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
 main : Signal Element
-main = render dims.width dims.height (svg dims margin) circles <~ Mouse.position
+main = render dims.width dims.height (svg dims margin) (embed circles) <~ Mouse.position

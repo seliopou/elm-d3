@@ -93,16 +93,29 @@ Elm.Native.D3.Selection.make = function(elm) {
     };
   }
 
-  function elm_bind(fn, enter, update, exit) {
+  function elm_bind(s, fn) {
     return function(k, selection) {
-      var bind  = selection.data(function (d) { return JS.fromList(fn(d)); });
-
-      enter(id, bind.enter());
-      update(id, bind);
-      exit(id, bind.exit());
-
-      return k(selection);
+      return s(function(_selection) {
+        var bind = _selection.data(function (d) { return JS.fromList(fn(d)); });
+        return k(bind);
+      }, selection);
     };
+  }
+
+  function elm_chain_widget(w, s) {
+    return function(k, selection) {
+      return w(function(_selection) {
+        s(id, _selection);
+        return k(_selection);
+      }, selection);
+    };
+  }
+
+  function elm_embed(w) {
+    return function(k, selection) {
+      w(id, selection);
+      return k(selection);
+    }
   }
 
   function elm_enter(k, selection) {
@@ -174,7 +187,9 @@ Elm.Native.D3.Selection.make = function(elm) {
     select : elm_select,
     selectAll : elm_selectAll,
     append : elm_append,
-    bind : F4(elm_bind),
+    bind : F2(elm_bind),
+    chain_widget : F2(elm_chain_widget),
+    embed : elm_embed,
     enter : elm_enter,
     exit : elm_exit,
     update : elm_update,

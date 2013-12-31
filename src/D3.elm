@@ -1,17 +1,25 @@
 module D3
   ( version                 -- : String
+
   , render                  -- : number -> number -> Selection a -> Selection a -> a -> Element
   , render'                 -- : (a -> (number, number)) -> Selection a -> Selection a -> a -> Element
-  , sequence , chain        -- : Selection a -> Selection a -> Selection a
-  , select , selectAll      -- : String -> Selection a
+
+  , sequence, chain         -- : Selection a -> Selection a -> Selection a
+  , select, selectAll       -- : String -> Selection a
   , append                  -- : String -> Selection a
   , remove                  -- : Selection a
   , bind                    -- : (a -> [b]) -> Selection b -> Selection b -> Selection b -> Selection a
-  , enter , update , exit   -- : Selection a
+  , chain'
+  , embed
+  , enter, update, exit     -- : Selection a
   , attr, style, property   -- : String -> (a -> Int -> String) -> Selection a
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
-  , html , text             -- : (a -> Int -> String) -> Selection a
-  , str, num                -- : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
+  , html, text              -- : (a -> Int -> String) -> Selection a
+
+  , str     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
+  , num     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> number -> Selection a
+  , fun     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> (a -> Int -> String) -> Selection a
+
   , transition              -- : Selection a
   , delay                   -- : (a -> Int -> Int) -> Selection a
   , duration                -- : (a -> Int -> Int) -> Selection a
@@ -22,8 +30,8 @@ import Native.D3.Selection
 import Native.D3.Transition
 import String
 
-
 data Selection a = Selection
+data Widget a b = Widget
 
 version : String
 version = Native.D3.version
@@ -59,7 +67,6 @@ render' dims root selection datum =
 sequence : Selection a -> Selection a -> Selection a
 sequence = Native.D3.Selection.sequence
 
-
 -- Chain two selections. Think of this as the method chaining operator.
 --
 --   chain s1 s2
@@ -67,24 +74,28 @@ sequence = Native.D3.Selection.sequence
 -- is equivalent to
 --
 --   context.s1().s2();
---   
+--
 chain : Selection a -> Selection a -> Selection a
 chain = Native.D3.Selection.chain
 
--- Infix operator alias for chain.
+-- Infix operator aliases for chain.
 --
 infixl 4 |.
 (|.) : Selection a -> Selection a -> Selection a
 (|.) = chain
+
+infixl 4 <.>
+(<.>) : Selection a -> Selection a -> Selection a
+(<.>) = chain
 
 -- Create a single-element (or empty) selection given a css selector.
 --
 --   select selector
 --
 -- is equivalent to
--- 
+--
 --   context.select(selector);
--- 
+--
 select : String -> Selection a
 select = Native.D3.Selection.select
 
@@ -93,9 +104,9 @@ select = Native.D3.Selection.select
 --   selectAll selector
 --
 -- is equivalent to
--- 
+--
 --   context.selectAll(selector);
--- 
+--
 selectAll : String -> Selection a
 selectAll = Native.D3.Selection.selectAll
 
@@ -103,8 +114,8 @@ selectAll = Native.D3.Selection.selectAll
 --
 --   append element
 --
--- is equivalent to 
---   
+-- is equivalent to
+--
 --   context.append(element);
 --
 append : String -> Selection a
@@ -121,20 +132,53 @@ append = Native.D3.Selection.append
 remove : Selection a
 remove = Native.D3.Selection.remove
 
--- Bind data to the current selection and associate and enter, update, and exit
--- selections with the bound context.
+-- Bind data to the given selection, creating a widget that will nest the
+-- result under a provided parent.
 --
---   bind fn s1 s2 s3
+--   bind s f
+--
+-- is equlvalent to
+--
+--   function(p) { return p.s().bind(f); }
+--
+bind : Selection a -> (a -> [b]) -> Widget a b
+bind s f = Native.D3.Selection.bind s f
+
+-- Infix operator alias for bind.
+--
+infixl 6 |=
+(|=) : Selection a -> (a -> [b]) -> Widget a b
+(|=) = bind
+
+-- Chain is the Widget-analogue of chain on Selections. It will chain Selection
+-- onto the result of the widget, and then return the original Selection the
+-- Widget produced.
+--
+--   chain w s p
 --
 -- is equivalent to
 --
---   var bound = context.data(fn);
---   bound.enter().call(s1);
---   bound.call(s2);
---   bound.exit().call(s3);
---   
-bind : (a -> [b]) -> Selection b -> Selection b -> Selection b -> Selection a
-bind = Native.D3.Selection.bind
+--   context = w(p);
+--   context.s();
+--   context;
+--
+chain' : Widget a b -> Selection b -> Widget a b
+chain' = Native.D3.Selection.chain_widget
+
+-- Infix operator alias for chain'.
+--
+infixl 2 |-
+(|-) : Widget a b -> Selection b -> Widget a b
+(|-) = chain'
+
+-- Casts a `Widget a b` to a `Selection a`. Wrapping a value with this call
+-- disallows further nested chanining, and allows you to embed it on other
+-- selection.
+--
+-- This is the only way to use a `Widget a b` type.
+--
+embed : Widget a b -> Selection a
+embed = Native.D3.Selection.embed
 
 -- Create an enter selection.
 --
@@ -157,9 +201,6 @@ enter = Native.D3.Selection.enter
 --
 update : Selection a
 update = Native.D3.Selection.update
-
-context : Selection a
-context = update
 
 -- Create an exit selection.
 --
@@ -249,7 +290,10 @@ text = Native.D3.Selection.text
 --
 --   context.op(name, function() { return n; });
 --
-num : (String -> (a -> Int -> String) -> Selection a) -> String -> number -> Selection a
+num : (String -> (a -> Int -> String) -> Selection a)
+    -> String
+    -> number
+    -> Selection a
 num a name v = a name (\_ _ -> show v)
 
 -- String casting helper for attr and similar functions.
@@ -260,8 +304,25 @@ num a name v = a name (\_ _ -> show v)
 --
 --   context.op(name, function() { return string; });
 --
-str : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
+str : (String -> (a -> Int -> String) -> Selection a)
+    -> String
+    -> String
+    -> Selection a
 str a name v = a name (\_ _ -> v)
+
+-- Function casting helper for attr and similar functions. This is a NOOP.
+--
+--   fun op name fn
+--
+-- is equivalent to
+--
+--   context.op(name, fn)
+--
+fun : (String -> (a -> Int -> String) -> Selection a)
+    -> String
+    -> (a -> Int -> String)
+    -> Selection a
+fun f = f
 
 -------------------------------------------------------------------------------
 -- Transition
