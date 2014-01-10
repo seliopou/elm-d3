@@ -27,7 +27,7 @@ root directory of the elm-d3 repository. They'll come in handy later.
   and
 * `elm-d3.js`: the previous two files, concatenated.
 
-To get an example compiled and running in your browser using the following
+To get an example compiled and running in your browser, use the following
 commands:
 
     elm --make --src-dir=src `./scripts/build-flags` examples/Circles.elm
@@ -46,6 +46,22 @@ construct selections using `select` and `selectAll`, and perform operations on
 selections using functions like `attr` and `style`. You can also chain those
 operations together useing the `chain` function or the infix operator `|.`.
 Both do the same thing&mdash;in essence, method chaining.
+
+In addition, elm-d3 allows you to bind data to a `Selection a` and specify what
+should happen when you add, update, or remove data from that selection. You do
+this by using the `bind` function, or the `|=` infix operator, which takes a
+`Selection a` as its first argument, a function `a -> [b]` as its second, and
+produces a `Widget a b`. A `Widget a b` is in essence a `Selection b` that can
+be nested in a `Selection a` in a type-safe way. However, in order to chain
+`Selection b`s onto a `Widget a b`, you have to use the `|-` operator. This
+behaves a bit diferently than `|.` as it returns the original `Widget a b`
+rather than than `Selection b` that is its second argument. You can see an
+[example of this below][1].
+
+To use a `Widget a b`, you must apply the `embed` function to it, which will
+turn it into a `Selection a`.
+
+[1]: #example
 
 Creating a `Selection a` doesn't actually draw anything on the screen. Think of
 it more along the lines of a [reusable chart][chart] that you can build up
@@ -85,28 +101,26 @@ svg ds ms =
   |. append "g"
      |. str attr "transform" (translate margin.left margin.top)
 
-boxes : Selection (number, number)
-boxes = 
+boxes : Widget (number, number) (number, number, String)
+boxes =
   selectAll ".box"
-  |. bind (\(x, y) -> [(x, 0, "cyan"), (0, y, "magenta")])
-     -- enter
-     (append "rect"
-     |. str attr "class" "box"
-     |. num attr "width"  100
-     |. num attr "height" 100
-     |. attr     "fill"   (\(_, _, c) _ -> c))
-     -- update
-     (update
-     |. attr "x" (\(x, _, _) _ -> show x)
-     |. attr "y" (\(_, y, _) _ -> show y))
-     -- exit
-     remove
+  |= (\(x, y) -> [(x, 0, "cyan"), (0, y, "magenta")])
+     |- enter <.> append "rect"
+        |. str attr "class" "box"
+        |. num attr "width"  100
+        |. num attr "height" 100
+        |. attr     "fill"   (\(_, _, c) _ -> c)
+     |- update
+        |. attr "x" (\(x, _, _) _ -> show x)
+        |. attr "y" (\(_, y, _) _ -> show y)
+     |- exit
+        |. remove
 
 translate : number -> number -> String
 translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
 main : Signal Element
-main = render dims.height dims.width (svg dims margin) boxes <~ Mouse.position
+main = render dims.height dims.width (svg dims margin) (embed boxes) <~ Mouse.position
 ```
 
 It's common practice when using d3 to start building your svg document with an
