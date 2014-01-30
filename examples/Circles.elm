@@ -9,8 +9,8 @@ margin = { top = 25, left = 25, right = 25, bottom = 25 }
 dims   = { height = size - margin.top - margin.bottom
          , width  = size - margin.left - margin.right }
 
-type Dimensions = { height : number, width : number }
-type Margins = { top : number, left : number, right : number, bottom : number }
+type Dimensions = { height : Int, width : Int }
+type Margins = { top : Int, left : Int, right : Int, bottom : Int }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =

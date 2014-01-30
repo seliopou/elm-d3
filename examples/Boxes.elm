@@ -8,8 +8,8 @@ margin = { top = 10, left = 10, right = 10, bottom = 10 }
 dims   = { height = size - margin.top - margin.bottom
          , width  = size - margin.left - margin.right }
 
-type Dimensions = { height : number, width : number }
-type Margins = { top : number, left : number, right : number, bottom : number }
+type Dimensions = { height : Float, width : Float }
+type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
