@@ -13,10 +13,10 @@ type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  append "svg"
+  static_ "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. append "g"
+  |. static_ "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 boxes : Widget (number, number) (number, number, String)
@@ -37,5 +37,9 @@ boxes =
 translate : number -> number -> String
 translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
+vis dims margin =
+  svg dims margin
+  |. embed boxes
+
 main : Signal Element
-main = render dims.height dims.width (svg dims margin) (embed boxes) <~ Mouse.position
+main = render dims.height dims.width (vis dims margin) <~ Mouse.position

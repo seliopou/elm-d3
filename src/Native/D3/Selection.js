@@ -1,4 +1,5 @@
 import "../cast"
+import "../gensym"
 
 Elm.Native.D3.Selection = {};
 Elm.Native.D3.Selection.make = function(elm) {
@@ -72,6 +73,16 @@ Elm.Native.D3.Selection.make = function(elm) {
     };
   }
 
+  function elm_nest(s1, s2) {
+    return function(k, selection) {
+      return s1(function(_selection) {
+        return s2(function(_) {
+          return k(_selection)
+        }, _selection);
+      }, selection);
+    };
+  }
+
   function elm_select(selector) {
     var selector = JS.fromString(selector);
     return function(k, selection) {
@@ -134,6 +145,22 @@ Elm.Native.D3.Selection.make = function(elm) {
     return k(selection.remove());
   }
 
+  function elm_static(element) {
+    var element = JS.fromString(element),
+        static_class = gensym('static');
+
+    return function(k, selection) {
+      var static_ = selection.selectAll('.' + static_class)
+        .data(function(d) { return [d]; });
+
+      static_.enter().append(element);
+
+      var result = k(static_);
+      static_.classed(static_class, true)
+      return result;
+    };
+  }
+
   function elm_classed(name, valfn) {
     name = JS.fromString(name);
     valfn = safeValfn(valfn, safePredicate);
@@ -184,9 +211,11 @@ Elm.Native.D3.Selection.make = function(elm) {
     version : JS.toString(d3.version),
     sequence : F2(elm_sequence),
     chain : F2(elm_chain),
+    nest : F2(elm_nest),
     select : elm_select,
     selectAll : elm_selectAll,
     append : elm_append,
+    static_ : elm_static,
     bind : F2(elm_bind),
     chain_widget : F2(elm_chain_widget),
     embed : elm_embed,

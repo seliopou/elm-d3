@@ -12,8 +12,8 @@ Elm.Native.D3.Render.make = function(elm) {
   function id(x) { return x; }
 
   function run(k) {
-    return function() {
-      return k(id, this);
+    return function(selection) {
+      return k(id, selection);
     };
   }
 
@@ -23,29 +23,26 @@ Elm.Native.D3.Render.make = function(elm) {
       .datum(model.datum);
     var node = root.node();
 
-    node.__node = run(model.root).apply(root);
-    node.__node.call(run(model.selection));
+    root.call(run(model.selection));
 
     return node;
   }
 
   function update(node, _old, _new) {
-    d3.select(node).datum(_new.datum);
-    node.__node
+    d3.select(node)
         .datum(_new.datum)
         .call(run(_new.selection));
 
     return true;
   }
 
-  function render_selection(width, height, root, selection, datum) {
+  function render_selection(width, height, selection, datum) {
     return A3(newElement, width, height, {
       'ctor'   : 'Custom',
       'type'   : 'D3',
       'render' : render,
       'update' : update,
       'model'  : { 
-        'root' : root,
         'height' : height,
         'width' : width,
         'selection' : selection,
@@ -55,6 +52,6 @@ Elm.Native.D3.Render.make = function(elm) {
   }
 
   return elm.Native.D3.Render.values = {
-    render : F5(render_selection)
+    render : F4(render_selection)
   };
 }
