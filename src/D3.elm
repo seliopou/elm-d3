@@ -90,6 +90,28 @@ infixl 4 <.>
 (<.>) : Selection a -> Selection a -> Selection a
 (<.>) = chain
 
+-- Nest a selection below another, setting the context to the parent selection.
+--
+--   nest s1 s2
+--
+-- is equivalent to
+--
+--   context = context.s1();
+--   context.s2();
+--
+nest : Selection a -> Selection a -> Selection a
+nest = Native.D3.Selection.nest
+
+-- Infix operator alias for nest
+--
+infixl 1 |^
+(|^) : Selection a -> Selection a -> Selection a
+(|^) = nest
+
+infixl 1 |-^
+(|-^) : Selection a -> Widget a b -> Selection a
+(|-^) a b = nest a (embed b)
+
 -- Create a single-element (or empty) selection given a css selector.
 --
 --   select selector
