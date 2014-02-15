@@ -40,18 +40,17 @@ version = Native.D3.version
 -------------------------------------------------------------------------------
 -- Selection-to-Runtime API
 
--- Render a `Selection a`, given a width and height, a root selection that will
--- be run only once, the selection that will depend on the datum, and the datum.
+-- Render a `Selection a`, given a width and height, and a datum.
 --
-render : number -> number -> Selection a -> Selection a -> a -> Element
+render : number -> number -> Selection a -> a -> Element
 render = Native.D3.Render.render
 
 -- Render a `Selection a` when the width and height depend on the datum.
 --
-render' : (a -> (number, number)) -> Selection a -> Selection a -> a -> Element
-render' dims root selection datum =
+render' : (a -> (number, number)) -> Selection a -> a -> Element
+render' dims selection datum =
   let (width, height) = dims datum
-    in render width height root selection datum
+    in render width height selection datum
 
 -------------------------------------------------------------------------------
 -- Core Selection API

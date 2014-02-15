@@ -17,10 +17,10 @@ type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  append "svg"
+  static_ "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. append "g"
+  |. static_ "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 circles : Widget [D3.Voronoi.Point] D3.Voronoi.Point
@@ -59,9 +59,12 @@ randomPoints n =
   let mk_point x y = { x = x * dims.width , y = y * dims.height } in
     zipWith mk_point <~ (floatList (constant n)) ~ (floatList (constant n))
 
+vis dims margin =
+  svg dims margin
+  |. sequence (embed voronoi) (embed circles)
+
 main : Signal Element
 main =
   let mouse (x, y) = { x = (toFloat x) - margin.left, y = (toFloat y) - margin.top }
       points = (\m ps -> mouse m :: ps) <~ Mouse.position ~ (randomPoints 100)
-      v = sequence (embed voronoi) (embed circles)
-    in render dims.width dims.height (svg dims margin) v <~ points
+    in render dims.width dims.height (vis dims margin) <~ points

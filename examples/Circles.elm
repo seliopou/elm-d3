@@ -14,10 +14,10 @@ type Margins = { top : Int, left : Int, right : Int, bottom : Int }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  append "svg"
+  static_ "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. append "g"
+  |. static_ "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 -- Move the mouse to the left to right to remove or add circles. Move the mouse
@@ -47,5 +47,9 @@ color y i =
 translate : number -> number -> String
 translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
+vis dims margin =
+  svg dims margin
+  |. embed circles
+
 main : Signal Element
-main = render dims.width dims.height (svg dims margin) (embed circles) <~ Mouse.position
+main = render dims.width dims.height (vis dims margin) <~ Mouse.position
