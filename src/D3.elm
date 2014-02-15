@@ -75,7 +75,7 @@ sequence = Native.D3.Selection.sequence
 --
 -- is equivalent to
 --
---   context.s1().s2();
+--   context = context.s1().s2();
 --
 chain : Selection a -> Selection a -> Selection a
 chain = Native.D3.Selection.chain
@@ -118,7 +118,7 @@ infixl 1 |-^
 --
 -- is equivalent to
 --
---   context.select(selector);
+--   context = context.select(selector);
 --
 select : String -> Selection a
 select = Native.D3.Selection.select
@@ -129,7 +129,7 @@ select = Native.D3.Selection.select
 --
 -- is equivalent to
 --
---   context.selectAll(selector);
+--   context = context.selectAll(selector);
 --
 selectAll : String -> Selection a
 selectAll = Native.D3.Selection.selectAll
@@ -140,7 +140,7 @@ selectAll = Native.D3.Selection.selectAll
 --
 -- is equivalent to
 --
---   context.append(element);
+--   context = context.append(element);
 --
 append : String -> Selection a
 append = Native.D3.Selection.append
@@ -157,7 +157,7 @@ static_ = Native.D3.Selection.static_
 --
 -- is equivalent to
 --
---   context.remove();
+--   context = context.remove();
 --
 remove : Selection a
 remove = Native.D3.Selection.remove
@@ -184,13 +184,13 @@ infixl 6 |=
 -- onto the result of the widget, and then return the original Selection the
 -- Widget produced.
 --
---   chain w s p
+--   chain' w s
 --
 -- is equivalent to
 --
---   context = w(p);
---   context.s();
---   context;
+--   function(p) {
+--     return w(p).s();
+--   }
 --
 chain' : Widget a b -> Selection b -> Widget a b
 chain' = Native.D3.Selection.chain_widget
@@ -207,6 +207,10 @@ infixl 2 |-
 --
 -- This is the only way to use a `Widget a b` type.
 --
+-- equivalent to
+--
+--   w(context);
+--
 embed : Widget a b -> Selection a
 embed = Native.D3.Selection.embed
 
@@ -216,7 +220,7 @@ embed = Native.D3.Selection.embed
 --
 -- is equivalent to
 --
---   context.enter();
+--   context = context.enter();
 --
 enter : Selection a
 enter = Native.D3.Selection.enter
@@ -227,7 +231,7 @@ enter = Native.D3.Selection.enter
 --
 -- is equivalent to
 --
---   context;
+--   context = context;
 --
 update : Selection a
 update = Native.D3.Selection.update
@@ -238,7 +242,7 @@ update = Native.D3.Selection.update
 --
 -- is equivalent to
 --
---   context.exit();
+--   context = context.exit();
 --
 exit : Selection a
 exit = Native.D3.Selection.exit
@@ -252,7 +256,7 @@ exit = Native.D3.Selection.exit
 --
 -- is equivalent to
 --
---   context.attr(name, fn);
+--   context = context.attr(name, fn);
 --
 attr : String -> (a -> Int -> String) -> Selection a
 attr = Native.D3.Selection.attr
@@ -263,7 +267,7 @@ attr = Native.D3.Selection.attr
 --
 -- is equivalent to
 --
---   context.style(name, fn);
+--   context = context.style(name, fn);
 --
 style : String -> (a -> Int -> String) -> Selection a
 style = Native.D3.Selection.style
@@ -274,7 +278,7 @@ style = Native.D3.Selection.style
 --
 -- is equivalent to
 --
---   context.property(name, fn);
+--   context = context.property(name, fn);
 --
 property : String -> (a -> Int -> String) -> Selection a
 property = Native.D3.Selection.property
@@ -285,7 +289,7 @@ property = Native.D3.Selection.property
 --
 -- is equivalent to
 --
---   context.classed(name, fn);
+--   context = context.classed(name, fn);
 --
 classed : String -> (a -> Int -> Bool) -> Selection a
 classed = Native.D3.Selection.classed
@@ -296,7 +300,7 @@ classed = Native.D3.Selection.classed
 --
 -- is equivalent to
 --
---   context.html(fn);
+--   context = context.html(fn);
 --
 html : (a -> Int -> String) -> Selection a
 html = Native.D3.Selection.html
@@ -307,7 +311,7 @@ html = Native.D3.Selection.html
 --
 -- is equivalent to
 --
---   context.text(fn);
+--   context = context.text(fn);
 --
 text : (a -> Int -> String) -> Selection a
 text = Native.D3.Selection.text
@@ -318,7 +322,7 @@ text = Native.D3.Selection.text
 --
 -- is equivalent to
 --
---   context.op(name, function() { return n; });
+--   context = context.op(name, function() { return n; });
 --
 num : (String -> (a -> Int -> String) -> Selection a)
     -> String
@@ -332,7 +336,7 @@ num a name v = a name (\_ _ -> show v)
 --
 -- is equivalent to
 --
---   context.op(name, function() { return string; });
+--   context = context.op(name, function() { return string; });
 --
 str : (String -> (a -> Int -> String) -> Selection a)
     -> String
@@ -346,7 +350,7 @@ str a name v = a name (\_ _ -> v)
 --
 -- is equivalent to
 --
---   context.op(name, fn)
+--   context = context.op(name, fn)
 --
 fun : (String -> (a -> Int -> String) -> Selection a)
     -> String
@@ -363,7 +367,7 @@ fun f = f
 --
 -- is equivalent to
 --
---   context.transition();
+--   context = context.transition();
 --
 transition : Selection a
 transition = Native.D3.Transition.transition
@@ -374,7 +378,7 @@ transition = Native.D3.Transition.transition
 --
 -- is equivalent to
 --
---   context.delay(fn);
+--   context = context.delay(fn);
 --
 delay : (a -> Int -> Int) -> Selection a
 delay = Native.D3.Transition.delay
@@ -385,7 +389,7 @@ delay = Native.D3.Transition.delay
 --
 -- is equivalent to
 --
---   context.delay(fn);
+--   context = context.delay(fn);
 --
 duration : (a -> Int -> Int) -> Selection a
 duration = Native.D3.Transition.duration
