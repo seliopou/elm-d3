@@ -7,6 +7,7 @@ module D3
   , sequence, chain         -- : Selection a -> Selection a -> Selection a
   , select, selectAll       -- : String -> Selection a
   , append                  -- : String -> Selection a
+  , static_                 -- : String -> Selection a
   , remove                  -- : Selection a
   , bind                    -- : (a -> [b]) -> Selection b -> Selection b -> Selection b -> Selection a
   , chain'
@@ -64,6 +65,8 @@ render' dims root selection datum =
 --   context.s1();
 --   context.s2();
 --
+-- and preserves the context.
+--
 sequence : Selection a -> Selection a -> Selection a
 sequence = Native.D3.Selection.sequence
 
@@ -120,6 +123,12 @@ selectAll = Native.D3.Selection.selectAll
 --
 append : String -> Selection a
 append = Native.D3.Selection.append
+
+-- Append a DOM element, but only once.
+--
+--
+static_ : String -> Selection a
+static_ = Native.D3.Selection.static_
 
 -- Remove the current context.
 --

@@ -1,4 +1,5 @@
 import "../cast"
+import "../gensym"
 
 Elm.Native.D3.Selection = {};
 Elm.Native.D3.Selection.make = function(elm) {
@@ -134,6 +135,22 @@ Elm.Native.D3.Selection.make = function(elm) {
     return k(selection.remove());
   }
 
+  function elm_static(element) {
+    var element = JS.fromString(element),
+        static_class = gensym('static');
+
+    return function(k, selection) {
+      var static_ = selection.selectAll('.' + static_class)
+        .data(function(d) { return [d]; });
+
+      static_.enter().append(element);
+
+      var result = k(static_);
+      static_.classed(static_class, true)
+      return result;
+    };
+  }
+
   function elm_classed(name, valfn) {
     name = JS.fromString(name);
     valfn = safeValfn(valfn, safePredicate);
@@ -187,6 +204,7 @@ Elm.Native.D3.Selection.make = function(elm) {
     select : elm_select,
     selectAll : elm_selectAll,
     append : elm_append,
+    static_ : elm_static,
     bind : F2(elm_bind),
     chain_widget : F2(elm_chain_widget),
     embed : elm_embed,
