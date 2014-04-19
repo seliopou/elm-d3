@@ -10,7 +10,7 @@ trap "rm $TEMPFILE 2>/dev/null || true" exit
 
 cat << EOF > $TEMPFILE
 var style = document.querySelector('head').appendChild(document.createElement('style'));
-style.innerText = "`cat $@ | sed -e 's/\\$//' -e 's/"/\\"/g' | tr -d '\n'`";
+style.innerText = "`cat $@ | sed -e 's/\\$//' -e 's/\\"/\\\\"/g' | tr -d '\n'`";
 EOF
 
 mkdir -p `pwd`/build
