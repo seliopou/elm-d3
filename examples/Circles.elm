@@ -1,6 +1,6 @@
 module Circles where
 
-import open D3
+import D3(..)
 import D3.Color 
 import Mouse
 

@@ -1,9 +1,9 @@
 module Voronoi where
 
-import open D3
+import D3(..)
 import D3.Voronoi
 import Mouse
-import open Random
+import Random(..)
 
 width = 960
 height = 500

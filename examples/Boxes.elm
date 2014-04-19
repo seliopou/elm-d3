@@ -1,6 +1,6 @@
 module Boxes where
 
-import open D3
+import D3(..)
 import Mouse
 
 size   = 300
