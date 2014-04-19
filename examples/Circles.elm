@@ -14,10 +14,10 @@ type Margins = { top : Int, left : Int, right : Int, bottom : Int }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  static_ "svg"
+  static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. static_ "g"
+  |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 -- Move the mouse to the left to right to remove or add circles. Move the mouse

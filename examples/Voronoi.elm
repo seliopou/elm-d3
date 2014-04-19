@@ -17,10 +17,10 @@ type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  static_ "svg"
+  static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. static_ "g"
+  |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 circles : Widget [D3.Voronoi.Point] D3.Voronoi.Point

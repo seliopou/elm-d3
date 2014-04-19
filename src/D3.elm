@@ -7,7 +7,7 @@ module D3
   , sequence, chain         -- : Selection a -> Selection a -> Selection a
   , select, selectAll       -- : String -> Selection a
   , append                  -- : String -> Selection a
-  , static_                 -- : String -> Selection a
+  , static                  -- : String -> Selection a
   , remove                  -- : Selection a
 
   , bind                    -- : Selection a -> (a -> [b]) -> Widget a b
@@ -150,8 +150,8 @@ append = Native.D3.Selection.append
 -- Append a DOM element, but only once.
 --
 --
-static_ : String -> Selection a
-static_ = Native.D3.Selection.static_
+static : String -> Selection a
+static = Native.D3.Selection.static_
 
 -- Remove the current context.
 --
