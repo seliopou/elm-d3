@@ -1,17 +1,19 @@
 module D3
   ( version                 -- : String
 
-  , render                  -- : number -> number -> Selection a -> Selection a -> a -> Element
-  , render'                 -- : (a -> (number, number)) -> Selection a -> Selection a -> a -> Element
+  , render                  -- : number -> number -> Selection a -> a -> Element
+  , render'                 -- : (a -> (number, number)) -> Selection a -> a -> Element
 
   , sequence, chain         -- : Selection a -> Selection a -> Selection a
   , select, selectAll       -- : String -> Selection a
   , append                  -- : String -> Selection a
   , static_                 -- : String -> Selection a
   , remove                  -- : Selection a
-  , bind                    -- : (a -> [b]) -> Selection b -> Selection b -> Selection b -> Selection a
-  , chain'
-  , embed
+
+  , bind                    -- : Selection a -> (a -> [b]) -> Widget a b
+  , chain'                  -- : Widget a b -> Selection b -> Widget a b
+  , embed                   -- : Widget a b -> Selection a
+
   , enter, update, exit     -- : Selection a
   , attr, style, property   -- : String -> (a -> Int -> String) -> Selection a
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
