@@ -14,7 +14,7 @@ module D3.Event
 
   ) where
 
-import open D3
+import D3(..)
 import Native.D3.Event
 import Signal
 import String
