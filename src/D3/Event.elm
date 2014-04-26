@@ -1,5 +1,5 @@
 module D3.Event
-  ( start   -- : () -> Stream e
+  ( stream  -- : () -> Stream e
   , folde   -- : (e -> b -> b) -> b -> Stream e -> Signal b
 
   , click       -- : MouseHandler e a
@@ -26,8 +26,8 @@ data Event e
 
 type Stream e = Signal (Event e)
 
-start : () -> Stream e
-start () = Signal.constant Start
+stream : () -> Stream e
+stream () = Signal.constant Start
 
 folde : (e -> b -> b) -> b -> Stream e -> Signal b
 folde f m =
