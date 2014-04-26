@@ -12,6 +12,10 @@ module D3.Event
   , mouseover   -- : MouseHandler e a
   , mouseup     -- : MouseHandler e a
 
+  , keyup       -- : KeyboardEvent e a
+  , keydown     -- : KeyboardEvent e a
+  , keypress    -- : KeyboardEvent e a
+
   ) where
 
 import D3(..)
@@ -81,3 +85,28 @@ mouseover = handleMouse "mouseover"
 
 mouseup : MouseHandler e a
 mouseup = handleMouse "mouseup"
+
+-- Keyboard event datatypes and handlers
+--
+
+type KeyboardEvent = {
+  altKey : Bool,
+  keyCode : Int,
+  ctrlKey : Bool,
+  metaKey : Bool,
+  shiftKey : Bool
+}
+
+type KeyboardHandler e a = Stream e -> (KeyboardEvent -> a -> Int -> e) -> Selection a
+
+handleKeyboard : String -> KeyboardHandler e a
+handleKeyboard e s f = Native.D3.Event.handleKeyboard e s (\m a i -> Event (f m a i))
+
+keyup : KeyboardHandler e a
+keyup = handleKeyboard "keyup"
+
+keydown : KeyboardHandler e a
+keydown = handleKeyboard "keydown"
+
+keypress : KeyboardHandler e a
+keypress = handleKeyboard "keypress"

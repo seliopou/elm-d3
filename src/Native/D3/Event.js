@@ -22,6 +22,15 @@ Elm.Native.D3.Event.make = function(elm) {
     });
   }
 
+  function keyboard_event() {
+    return JS.toRecord({
+      altKey : d3.event.altKey,
+      keyCode : d3.event.keyCode,
+      ctrlKey : d3.event.ctrlKey,
+      metaKey : d3.event.metaKey,
+      shiftKey : d3.event.shiftKey
+    });
+  }
 
   function elm_handle_mouse(_event, signal, fn) {
     return function(k, selection, i) {
@@ -31,7 +40,16 @@ Elm.Native.D3.Event.make = function(elm) {
     };
   }
 
+  function elm_handle_keyboard(_event, signal, fn) {
+    return function(k, selection, i) {
+      return k(selection.on(_event, safeIndexed(i, function(d, i) {
+        return elm.notify(signal.id, A3(fn, keyboard_event(), d, JS.toInt(i)));
+      })), i);
+    };
+  }
+
   return elm.Native.D3.Event.values = {
-    handleMouse : F3(elm_handle_mouse)
+    handleMouse : F3(elm_handle_mouse),
+    handleKeyboard : F3(elm_handle_keyboard)
   };
 };
