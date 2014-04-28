@@ -12,8 +12,8 @@ Elm.Native.D3.Selection.make = function(elm) {
    * elements to which you can associate data and apply transformations,
    * filters, and subselections. Some of these operations mutate elements in
    * the selection, while others create distinct subselections. The user
-   * combines operations using either method chaining or sequence statements in
-   * JavaScript, i.e., the semicolon.
+   * combines operations using either method chaining or by sequencing
+   * statements in JavaScript, i.e., the semicolon.
    *
    * A selection encapsulates some state, operations transform that state and
    * then return to some implicit context that will apply further operations to
@@ -21,10 +21,10 @@ Elm.Native.D3.Selection.make = function(elm) {
    * This code models that pattern explicitly. A `Selection a` is a function
    * that takes a continuation and a selection, performs some stateful
    * operations to the selection, possibly creating a new one even, and then
-   * passing that to the continuation. You can think of `Selection a` as being
+   * passes that to the continuation. You can think of `Selection a` as being
    * an alias for a type that looks something like this:
    *
-   *   (d3.selection -> d3.selectiond) -> d3.selection -> d3.selection
+   *   (selection -> index -> unit) -> selection -> index -> unit
    *
    * This approach ensures that all operations that produce `Selection a`s are
    * pure functions. All effects are encapsulated in closures and deferred
@@ -33,6 +33,15 @@ Elm.Native.D3.Selection.make = function(elm) {
    * have to turn it into an `Element` by calling the `render` function. You
    * can find the render function in the D3 Elm module. See Native/D3/Render.js
    * for its implementation.
+   *
+   * Note that the index parameter is introduced to support the `static`
+   * selection below. The goal is to have static elements preserve both the
+   * data and index of its context, as well as propagate that down other
+   * selections. D3 typically does this bookeeping, but the implentation of
+   * `static`—and in fact `static` as a concept—require that this library
+   * perform the bookeeping explicity. See `bind` and `static` for situations
+   * where the handing of the index are different than in all the other
+   * functions.
    */
 
   elm.Native = elm.Native || {};
@@ -58,142 +67,148 @@ Elm.Native.D3.Selection.make = function(elm) {
   function id(x) { return x; }
 
   function elm_sequence(s1, s2) {
-    return function(k, selection) {
-      s1(id, selection);
-      s2(id, selection);
-      return k(selection);
+    return function(k, selection, i) {
+      s1(id, selection, i);
+      s2(id, selection, i);
+      return k(selection, i);
     };
   }
 
   function elm_chain(s1, s2) {
-    return function(k, selection) {
-      return s1(function(_selection) {
-        return s2(k, _selection);
-      }, selection);
+    return function(k, selection, i) {
+      return s1(function(_selection, j) {
+        return s2(k, _selection, j);
+      }, selection, i);
     };
   }
 
   function elm_select(selector) {
     var selector = JS.fromString(selector);
-    return function(k, selection) {
-      return k(selection.select(selector));
+    return function(k, selection, i) {
+      return k(selection.select(selector), i);
     };
   }
 
   function elm_selectAll(selector) {
     var selector = JS.fromString(selector);
-    return function(k, selection) {
-      return k(selection.selectAll(selector));
+    return function(k, selection, i) {
+      return k(selection.selectAll(selector), i);
     };
   }
 
   function elm_append(element) {
     var element = JS.fromString(element);
-    return function(k, selection) {
-      return k(selection.append(element));
+    return function(k, selection, i) {
+      return k(selection.append(element), i);
     };
   }
 
+  /* NB: Index bookkeeping is different, as bind ignores the index of the
+   * context. */
   function elm_bind(s, fn) {
-    return function(k, selection) {
-      return s(function(_selection) {
+    return function(k, selection, i) {
+      return s(function(_selection, _) {
         var bind = _selection.data(function (d) { return JS.fromList(fn(d)); });
         return k(bind);
-      }, selection);
+      }, selection, i);
     };
   }
 
   function elm_chain_widget(w, s) {
-    return function(k, selection) {
-      return w(function(_selection) {
-        s(id, _selection);
-        return k(_selection);
-      }, selection);
+    return function(k, selection, i) {
+      return w(function(_selection, j) {
+        s(id, _selection, j);
+        return k(_selection, j);
+      }, selection, i);
     };
   }
 
   function elm_embed(w) {
-    return function(k, selection) {
-      w(id, selection);
-      return k(selection);
+    return function(k, selection, i) {
+      w(id, selection, i);
+      return k(selection, i);
     }
   }
 
-  function elm_enter(k, selection) {
-    return k(selection.enter());
+  function elm_enter(k, selection, i) {
+    return k(selection.enter(), i);
   }
 
-  function elm_exit(k, selection) {
-    return k(selection.exit());
+  function elm_exit(k, selection, i) {
+    return k(selection.exit(), i);
   }
 
-  function elm_update(k, selection) {
-    return k(selection);
+  function elm_update(k, selection, i) {
+    return k(selection, i);
   }
 
-  function elm_remove(k, selection) {
-    return k(selection.remove());
+  function elm_remove(k, selection, i) {
+    return k(selection.remove(), i);
   }
 
+  /* NB: Index bookkeeping is different, as static ignores the index of the
+   * context. */
   function elm_static(element) {
     var element = JS.fromString(element),
         static_class = gensym('static');
 
-    return function(k, selection) {
-      var static_ = selection.selectAll('.' + static_class)
-        .data(function(d) { return [d]; });
+    return function(k, selection, i) {
+      return selection.each(safeIndexed(i, function(d, i) {
+        var s = d3.select(this),
+            static_ = s.select('.' + static_class);
 
-      static_.enter().append(element);
+        static_ = static_.size() == 0 ? s.append(element) : static_;
 
-      var result = k(static_);
-      static_.classed(static_class, true)
-      return result;
+        var result = k(static_, i);
+        static_.classed(static_class, true);
+        return result;
+      }));
     };
   }
 
   function elm_classed(name, valfn) {
     name = JS.fromString(name);
     valfn = safeValfn(valfn, safePredicate);
-    return function(k, selection) {
-      return k(selection.classed(name, valfn));
+    return function(k, selection, i) {
+      return k(selection.classed(name, safeIndexed(i, valfn)), i);
     };
   }
 
   function elm_attr(name, valfn) {
     name = JS.fromString(name);
     valfn = safeValfn(valfn, safeEvaluator);
-    return function(k, selection) {
-      return k(selection.attr(name, valfn));
+    return function(k, selection, i) {
+      return k(selection.attr(name, safeIndexed(i, valfn)), i);
     };
   }
 
   function elm_style(name, valfn) {
     name = JS.fromString(name);
     valfn = safeValfn(valfn, safeEvaluator);
-    return function(k, selection) {
-      return k(selection.style(name, valfn));
+    return function(k, selection, i) {
+      return k(selection.style(name, safeIndexed(i, valfn)), i);
     };
   }
 
   function elm_property(name, valfn) {
     name = JS.fromString(name);
     valfn = safeValfn(valfn, safeEvaluator);
-    return function(k, selection) {
-      return k(selection.property(name, valfn));
+    return function(k, selection, i) {
+      return k(selection.property(name, safeIndexed(i, valfn)), i);
     };
   }
 
   function elm_html(valfn) {
     valfn = safeValfn(valfn, safeEvaluator);
-    return function(k, selection) {
-      return k(selection.html(valfn));
+    return function(k, selection, i) {
+      return k(selection.html(safeIndexed(i, valfn)), i);
     };
   }
 
   function elm_text(valfn) {
     valfn = safeValfn(valfn, safeEvaluator);
-    return function(k, selection) {
-      return k(selection.text(valfn));
+    return function(k, selection, i) {
+      return k(selection.text(safeIndexed(i, valfn)), i);
     };
   }
 

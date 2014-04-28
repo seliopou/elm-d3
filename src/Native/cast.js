@@ -3,3 +3,9 @@ function safeValfn(valfn, caster) {
     ? caster(valfn)
     : valfn;
 };
+
+function safeIndexed(i, valfn) {
+  return typeof valfn == "function" && typeof i != "undefined"
+    ? function(d, _) { return valfn.call(this, d, i); }
+    : valfn;
+}
