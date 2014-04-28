@@ -27,14 +27,14 @@ circles =
   selectAll "circle"
   |= (\(x, y) -> repeat (x `div` 50) y)
      |- enter <.> append "circle"
-        |. attr     "fill" color
+        |. fun attr "fill" color
         |. num attr "r"    0
         |. num attr "cy"   150
-        |. attr     "cx"   (\_ i -> show (25 + 50 * i))
+        |. fun attr "cx"   (\_ i -> show (25 + 50 * i))
         |. transition
            |. num attr "r" 25
      |- update
-        |. attr "fill" color
+        |. fun attr "fill" color
      |- exit
         |. remove
 

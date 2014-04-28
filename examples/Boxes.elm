@@ -27,10 +27,10 @@ boxes =
         |. str attr "class" "box"
         |. num attr "width"  100
         |. num attr "height" 100
-        |. attr     "fill"   (\(_, _, c) _ -> c)
+        |. fun attr "fill"   (\(_, _, c) _ -> c)
      |- update
-        |. attr "x" (\(x, _, _) _ -> show x)
-        |. attr "y" (\(_, y, _) _ -> show y)
+        |. fun attr "x" (\(x, _, _) _ -> show x)
+        |. fun attr "y" (\(_, y, _) _ -> show y)
      |- exit
         |. remove
 

@@ -31,8 +31,8 @@ circles =
         |. num attr "r" 1.5
         |. str attr "fill" "black"
      |- update
-        |. attr "cx" (\p _ -> show p.x)
-        |. attr "cy" (\p _ -> show p.y)
+        |. fun attr "cx" (\p _ -> show p.x)
+        |. fun attr "cy" (\p _ -> show p.y)
 
 voronoi : Widget [D3.Voronoi.Point] [D3.Voronoi.Point]
 voronoi =
@@ -40,8 +40,8 @@ voronoi =
   |= cells
      |- enter <.> append "path"
      |- update
-        |. attr "d" (\ps _ -> path ps)
-        |. attr "class" (\_ i -> "q" ++ (show (mod i 9)) ++ "-9")
+        |. fun attr "d" (\ps _ -> path ps)
+        |. fun attr "class" (\_ i -> "q" ++ (show (mod i 9)) ++ "-9")
 
 cells : [D3.Voronoi.Point] -> [[D3.Voronoi.Point]]
 cells = D3.Voronoi.cellsWithClipping margin.right margin.top dims.width dims.height

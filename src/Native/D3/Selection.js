@@ -51,10 +51,10 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   var JS = Elm.Native.JavaScript.make(elm);
 
-
   function safeEvaluator(fn) {
     return function (a, i) {
-      return JS.fromString(A2(fn, a, JS.toInt(i)));
+      var result = A2(fn, a, JS.toInt(i));
+      return result.ctor == "Just" ? JS.fromString(result._0) : null;
     };
   }
 
