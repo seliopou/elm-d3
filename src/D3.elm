@@ -102,7 +102,7 @@ infixl 4 <.>
 --   context.s2();
 --
 nest : Selection a -> Selection a -> Selection a
-nest = Native.D3.Selection.nest
+nest a b = chain a (sequence b update)
 
 -- Infix operator alias for nest
 --
