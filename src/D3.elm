@@ -37,7 +37,7 @@ data Selection a = Selection
 data Widget a b = Widget
 
 version : String
-version = Native.D3.version
+version = Native.D3.Selection.version
 
 -------------------------------------------------------------------------------
 -- Selection-to-Runtime API
