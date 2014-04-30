@@ -50,11 +50,24 @@ Elm.Native.D3.Selection.make = function(elm) {
   if (elm.Native.D3.Selection.values) return elm.Native.D3.Selection.values;
 
   var JS = Elm.Native.JavaScript.make(elm);
+  var Json = Elm.Native.Json.make(elm);
 
-  function safeEvaluator(fn) {
+  function safeJson(fn) {
+    return function(a, i) {
+      return Json.toJSObject(A2(fn, a, JS.toInt(i)));
+    };
+  }
+
+  function safeOptEvaluator(fn) {
     return function (a, i) {
       var result = A2(fn, a, JS.toInt(i));
       return result.ctor == "Just" ? JS.fromString(result._0) : null;
+    };
+  }
+
+  function safeEvaluator(fn) {
+    return function (a, i) {
+      return JS.fromString(A2(fn, a, JS.toInt(i)));
     };
   }
 
@@ -176,7 +189,7 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   function elm_attr(name, valfn) {
     name = JS.fromString(name);
-    valfn = safeValfn(valfn, safeEvaluator);
+    valfn = safeValfn(valfn, safeOptEvaluator);
     return function(k, selection, i) {
       return k(selection.attr(name, safeIndexed(i, valfn)), i);
     };
@@ -184,7 +197,7 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   function elm_style(name, valfn) {
     name = JS.fromString(name);
-    valfn = safeValfn(valfn, safeEvaluator);
+    valfn = safeValfn(valfn, safeOptEvaluator);
     return function(k, selection, i) {
       return k(selection.style(name, safeIndexed(i, valfn)), i);
     };
@@ -192,7 +205,7 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   function elm_property(name, valfn) {
     name = JS.fromString(name);
-    valfn = safeValfn(valfn, safeEvaluator);
+    valfn = safeValfn(valfn, safeJson);
     return function(k, selection, i) {
       return k(selection.property(name, safeIndexed(i, valfn)), i);
     };

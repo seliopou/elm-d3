@@ -15,7 +15,8 @@ module D3
   , embed                   -- : Widget a b -> Selection a
 
   , enter, update, exit     -- : Selection a
-  , attr, style, property   -- : String -> (a -> Int -> String) -> Selection a
+  , attr, style             -- : String -> (a -> Int -> String) -> Selection a
+  , property                -- : String -> (a -> Int -> JsonValue) -> Selection a
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
   , html, text              -- : (a -> Int -> String) -> Selection a
 
@@ -29,10 +30,12 @@ module D3
   , duration                -- : (a -> Int -> Int) -> Selection a
   ) where
 
+import Json(..)
+import String
+
 import Native.D3.Render
 import Native.D3.Selection
 import Native.D3.Transition
-import String
 
 data Selection a = Selection
 data Widget a b = Widget
@@ -283,7 +286,7 @@ style = Native.D3.Selection.style
 --
 --   context = context.property(name, fn);
 --
-property : String -> (a -> Int -> Maybe String) -> Selection a
+property : String -> (a -> Int -> JsonValue) -> Selection a
 property = Native.D3.Selection.property
 
 -- Include or exclude the class on each element depending on the result of `fn`.
