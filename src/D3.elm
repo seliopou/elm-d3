@@ -264,7 +264,7 @@ exit = Native.D3.Selection.exit
 --
 --   context = context.attr(name, fn);
 --
-attr : String -> (a -> Int -> Maybe String) -> Selection a
+attr : String -> (a -> Int -> String) -> Selection a
 attr = Native.D3.Selection.attr
 
 -- Set a style property to the per-element value determined by `fn`.
@@ -275,7 +275,7 @@ attr = Native.D3.Selection.attr
 --
 --   context = context.style(name, fn);
 --
-style : String -> (a -> Int -> Maybe String) -> Selection a
+style : String -> (a -> Int -> String) -> Selection a
 style = Native.D3.Selection.style
 
 -- Set a DOM object property to the per-element value determined by `fn`.
@@ -330,11 +330,11 @@ text = Native.D3.Selection.text
 --
 --   context = context.op(name, function() { return n; });
 --
-num : (String -> (a -> Int -> Maybe String) -> Selection a)
+num : (String -> (a -> Int -> String) -> Selection a)
     -> String
     -> number
     -> Selection a
-num a name v = a name (\_ _ -> Just (show v))
+num a name v = a name (\_ _ -> (show v))
 
 -- String casting helper for attr and similar functions.
 --
@@ -344,14 +344,13 @@ num a name v = a name (\_ _ -> Just (show v))
 --
 --   context = context.op(name, function() { return string; });
 --
-str : (String -> (a -> Int -> Maybe String) -> Selection a)
+str : (String -> (a -> Int -> String) -> Selection a)
     -> String
     -> String
     -> Selection a
-str a name v = a name (\_ _ -> Just v)
+str a name v = a name (\_ _ -> v)
 
--- Function casting helper for attr and similar functions. This takes a total
--- function and lifts its return value to the Maybe type.
+-- Function casting helper for attr and similar functions. This is a NOOP.
 --
 --   fun op name fn
 --
@@ -359,25 +358,11 @@ str a name v = a name (\_ _ -> Just v)
 --
 --   context = context.op(name, fn)
 --
-fun : (String -> (a -> Int -> Maybe String) -> Selection a)
+fun : (String -> (a -> Int -> String) -> Selection a)
     -> String
     -> (a -> Int -> String)
     -> Selection a
-fun f e g = f e (\d i -> Just (g d i))
-
--- Function casting helper for attr and similar functions. This is a NOOP.
---
---   opt op name fn
---
--- is equivalent to
---
---   context = context.op(name, fn)
---
-opt : (String -> (a -> Int -> Maybe String) -> Selection a)
-    -> String
-    -> (a -> Int -> Maybe String)
-    -> Selection a
-opt f = f
+fun f = f
 
 -------------------------------------------------------------------------------
 -- Transition
