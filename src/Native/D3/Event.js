@@ -48,8 +48,18 @@ Elm.Native.D3.Event.make = function(elm) {
     };
   }
 
+  function elm_handle_input(signal, fn) {
+    return function(k, selection, i) {
+      return k(selection.on('input', safeIndexed(i, function(d, i) {
+        var value = d3.select(this).node().value;
+        return elm.notify(signal.id, A3(fn, JS.toString(value), d, JS.toInt(i)));
+      })), i);
+    };
+  }
+
   return elm.Native.D3.Event.values = {
     handleMouse : F3(elm_handle_mouse),
-    handleKeyboard : F3(elm_handle_keyboard)
+    handleKeyboard : F3(elm_handle_keyboard),
+    handleInput : F2(elm_handle_input)
   };
 };

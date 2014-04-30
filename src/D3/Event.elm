@@ -16,6 +16,7 @@ module D3.Event
   , keydown     -- : KeyboardEvent e a
   , keypress    -- : KeyboardEvent e a
 
+  , input       -- : InputEvent e a
   ) where
 
 import D3(..)
@@ -110,3 +111,14 @@ keydown = handleKeyboard "keydown"
 
 keypress : KeyboardHandler e a
 keypress = handleKeyboard "keypress"
+
+
+-- Input event datatypes and handlers
+--
+
+type InputEvent = String
+
+type InputHandler e a = Stream e -> (InputEvent -> a -> Int -> e) -> Selection a
+
+input : InputHandler e a
+input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i ))
