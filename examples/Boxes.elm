@@ -1,6 +1,6 @@
 module Boxes where
 
-import open D3
+import D3(..)
 import Mouse
 
 size   = 300
@@ -13,10 +13,10 @@ type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  static_ "svg"
+  static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. static_ "g"
+  |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 boxes : Widget (number, number) (number, number, String)
@@ -27,10 +27,10 @@ boxes =
         |. str attr "class" "box"
         |. num attr "width"  100
         |. num attr "height" 100
-        |. attr     "fill"   (\(_, _, c) _ -> c)
+        |. fun attr "fill"   (\(_, _, c) _ -> c)
      |- update
-        |. attr "x" (\(x, _, _) _ -> show x)
-        |. attr "y" (\(_, y, _) _ -> show y)
+        |. fun attr "x" (\(x, _, _) _ -> show x)
+        |. fun attr "y" (\(_, y, _) _ -> show y)
      |- exit
         |. remove
 

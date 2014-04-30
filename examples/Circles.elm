@@ -1,6 +1,6 @@
 module Circles where
 
-import open D3
+import D3(..)
 import D3.Color 
 import Mouse
 
@@ -14,10 +14,10 @@ type Margins = { top : Int, left : Int, right : Int, bottom : Int }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  static_ "svg"
+  static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. static_ "g"
+  |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 -- Move the mouse to the left to right to remove or add circles. Move the mouse
@@ -27,14 +27,14 @@ circles =
   selectAll "circle"
   |= (\(x, y) -> repeat (x `div` 50) y)
      |- enter <.> append "circle"
-        |. attr     "fill" color
+        |. fun attr "fill" color
         |. num attr "r"    0
         |. num attr "cy"   150
-        |. attr     "cx"   (\_ i -> show (25 + 50 * i))
+        |. fun attr "cx"   (\_ i -> show (25 + 50 * i))
         |. transition
            |. num attr "r" 25
      |- update
-        |. attr "fill" color
+        |. fun attr "fill" color
      |- exit
         |. remove
 

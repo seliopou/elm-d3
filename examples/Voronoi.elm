@@ -1,9 +1,9 @@
 module Voronoi where
 
-import open D3
+import D3(..)
 import D3.Voronoi
 import Mouse
-import open Random
+import Random(..)
 
 width = 960
 height = 500
@@ -17,10 +17,10 @@ type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  static_ "svg"
+  static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. static_ "g"
+  |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 circles : Widget [D3.Voronoi.Point] D3.Voronoi.Point
@@ -31,8 +31,8 @@ circles =
         |. num attr "r" 1.5
         |. str attr "fill" "black"
      |- update
-        |. attr "cx" (\p _ -> show p.x)
-        |. attr "cy" (\p _ -> show p.y)
+        |. fun attr "cx" (\p _ -> show p.x)
+        |. fun attr "cy" (\p _ -> show p.y)
 
 voronoi : Widget [D3.Voronoi.Point] [D3.Voronoi.Point]
 voronoi =
@@ -40,8 +40,8 @@ voronoi =
   |= cells
      |- enter <.> append "path"
      |- update
-        |. attr "d" (\ps _ -> path ps)
-        |. attr "class" (\_ i -> "q" ++ (show (mod i 9)) ++ "-9")
+        |. fun attr "d" (\ps _ -> path ps)
+        |. fun attr "class" (\_ i -> "q" ++ (show (mod i 9)) ++ "-9")
 
 cells : [D3.Voronoi.Point] -> [[D3.Voronoi.Point]]
 cells = D3.Voronoi.cellsWithClipping margin.right margin.top dims.width dims.height

@@ -82,7 +82,7 @@ repository.
 ```haskell
 module Boxes where
 
-import open D3
+import D3(..)
 import Mouse
 
 size   = 300
@@ -90,15 +90,15 @@ margin = { top = 10, left = 10, right = 10, bottom = 10 }
 dims   = { height = size - margin.top - margin.bottom
          , width  = size - margin.left - margin.right }
 
-type Dimensions = { height : number, width : number }
-type Margins = { top : number, left : number, right : number, bottom : number }
+type Dimensions = { height : Float, width : Float }
+type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 svg : Dimensions -> Margins -> Selection a
 svg ds ms =
-  append "svg"
+  static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
   |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. append "g"
+  |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
 boxes : Widget (number, number) (number, number, String)
@@ -119,8 +119,12 @@ boxes =
 translate : number -> number -> String
 translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
+vis dims margin =
+  svg dims margin
+  |. embed boxes
+
 main : Signal Element
-main = render dims.height dims.width (svg dims margin) (embed boxes) <~ Mouse.position
+main = render dims.height dims.width (vis dims margin) <~ Mouse.position
 ```
 
 It's common practice when using d3 to start building your svg document with an
@@ -165,13 +169,11 @@ There's also a `str` function that serves a similar purpose, except for string
 constants.
 
 `render` actually draws `Selection a` to the screen. Its first two arguments
-are the height and width of the drawing area. These are used by the elm runtime
-propertly lay out graphical elements. The third argument is a `Selection a`
-that sets up the initial document. The fourth is a `Selection a` that may
-change depending on the datum, and the final argument is the datum of type `a`.
-In this case, we're getting or datum from a signal of mouse positions. Whenever
-the mouse position updates, the Elm runtime will automatically update screen to
-reflect those changes.
+are the height and width of the drawing area. The third is the `Selection a`
+that will be renderd. The final argument is the datum of type `a` that will be
+bound to the selection that will be rendered. In this case, we're getting or
+datum from a signal of mouse positions. Whenever the mouse position updates,
+the Elm runtime will automatically update screen to reflect those changes.
 
 ### Further documentation
 

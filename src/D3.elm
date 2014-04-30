@@ -1,25 +1,28 @@
 module D3
   ( version                 -- : String
 
-  , render                  -- : number -> number -> Selection a -> Selection a -> a -> Element
-  , render'                 -- : (a -> (number, number)) -> Selection a -> Selection a -> a -> Element
+  , render                  -- : number -> number -> Selection a -> a -> Element
+  , render'                 -- : (a -> (number, number)) -> Selection a -> a -> Element
 
   , sequence, chain         -- : Selection a -> Selection a -> Selection a
   , select, selectAll       -- : String -> Selection a
   , append                  -- : String -> Selection a
-  , static_                 -- : String -> Selection a
+  , static                  -- : String -> Selection a
   , remove                  -- : Selection a
-  , bind                    -- : (a -> [b]) -> Selection b -> Selection b -> Selection b -> Selection a
-  , chain'
-  , embed
+
+  , bind                    -- : Selection a -> (a -> [b]) -> Widget a b
+  , chain'                  -- : Widget a b -> Selection b -> Widget a b
+  , embed                   -- : Widget a b -> Selection a
+
   , enter, update, exit     -- : Selection a
   , attr, style, property   -- : String -> (a -> Int -> String) -> Selection a
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
   , html, text              -- : (a -> Int -> String) -> Selection a
 
-  , str     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
-  , num     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> number -> Selection a
-  , fun     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> (a -> Int -> String) -> Selection a
+  , str     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> String -> Selection a
+  , num     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> number -> Selection a
+  , fun     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> (a -> Int -> String) -> Selection a
+  , opt     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> (a -> Int -> Maybe String) -> Selection a
 
   , transition              -- : Selection a
   , delay                   -- : (a -> Int -> Int) -> Selection a
@@ -35,7 +38,7 @@ data Selection a = Selection
 data Widget a b = Widget
 
 version : String
-version = Native.D3.version
+version = Native.D3.Selection.version
 
 -------------------------------------------------------------------------------
 -- Selection-to-Runtime API
@@ -100,7 +103,7 @@ infixl 4 <.>
 --   context.s2();
 --
 nest : Selection a -> Selection a -> Selection a
-nest = Native.D3.Selection.nest
+nest a b = chain a (sequence b update)
 
 -- Infix operator alias for nest
 --
@@ -148,8 +151,8 @@ append = Native.D3.Selection.append
 -- Append a DOM element, but only once.
 --
 --
-static_ : String -> Selection a
-static_ = Native.D3.Selection.static_
+static : String -> Selection a
+static = Native.D3.Selection.static_
 
 -- Remove the current context.
 --
@@ -258,7 +261,7 @@ exit = Native.D3.Selection.exit
 --
 --   context = context.attr(name, fn);
 --
-attr : String -> (a -> Int -> String) -> Selection a
+attr : String -> (a -> Int -> Maybe String) -> Selection a
 attr = Native.D3.Selection.attr
 
 -- Set a style property to the per-element value determined by `fn`.
@@ -269,7 +272,7 @@ attr = Native.D3.Selection.attr
 --
 --   context = context.style(name, fn);
 --
-style : String -> (a -> Int -> String) -> Selection a
+style : String -> (a -> Int -> Maybe String) -> Selection a
 style = Native.D3.Selection.style
 
 -- Set a DOM object property to the per-element value determined by `fn`.
@@ -280,7 +283,7 @@ style = Native.D3.Selection.style
 --
 --   context = context.property(name, fn);
 --
-property : String -> (a -> Int -> String) -> Selection a
+property : String -> (a -> Int -> Maybe String) -> Selection a
 property = Native.D3.Selection.property
 
 -- Include or exclude the class on each element depending on the result of `fn`.
@@ -324,11 +327,11 @@ text = Native.D3.Selection.text
 --
 --   context = context.op(name, function() { return n; });
 --
-num : (String -> (a -> Int -> String) -> Selection a)
+num : (String -> (a -> Int -> Maybe String) -> Selection a)
     -> String
     -> number
     -> Selection a
-num a name v = a name (\_ _ -> show v)
+num a name v = a name (\_ _ -> Just (show v))
 
 -- String casting helper for attr and similar functions.
 --
@@ -338,13 +341,14 @@ num a name v = a name (\_ _ -> show v)
 --
 --   context = context.op(name, function() { return string; });
 --
-str : (String -> (a -> Int -> String) -> Selection a)
+str : (String -> (a -> Int -> Maybe String) -> Selection a)
     -> String
     -> String
     -> Selection a
-str a name v = a name (\_ _ -> v)
+str a name v = a name (\_ _ -> Just v)
 
--- Function casting helper for attr and similar functions. This is a NOOP.
+-- Function casting helper for attr and similar functions. This takes a total
+-- function and lifts its return value to the Maybe type.
 --
 --   fun op name fn
 --
@@ -352,11 +356,25 @@ str a name v = a name (\_ _ -> v)
 --
 --   context = context.op(name, fn)
 --
-fun : (String -> (a -> Int -> String) -> Selection a)
+fun : (String -> (a -> Int -> Maybe String) -> Selection a)
     -> String
     -> (a -> Int -> String)
     -> Selection a
-fun f = f
+fun f e g = f e (\d i -> Just (g d i))
+
+-- Function casting helper for attr and similar functions. This is a NOOP.
+--
+--   opt op name fn
+--
+-- is equivalent to
+--
+--   context = context.op(name, fn)
+--
+opt : (String -> (a -> Int -> Maybe String) -> Selection a)
+    -> String
+    -> (a -> Int -> Maybe String)
+    -> Selection a
+opt f = f
 
 -------------------------------------------------------------------------------
 -- Transition
