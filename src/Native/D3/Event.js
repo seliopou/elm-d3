@@ -1,3 +1,5 @@
+import "../cast";
+
 Elm.Native.D3.Event = {};
 Elm.Native.D3.Event.make = function(elm) {
   'use strict';
@@ -20,11 +22,12 @@ Elm.Native.D3.Event.make = function(elm) {
     });
   }
 
+
   function elm_handle_mouse(_event, signal, fn) {
-    return function(k, selection) {
-      return k(selection.on(_event, function(d, i) {
-        return elm.notify(signal.id, A3(fn, mouse_event(), d, i));
-      }));
+    return function(k, selection, i) {
+      return k(selection.on(_event, safeIndexed(i, function(d, i) {
+        return elm.notify(signal.id, A3(fn, mouse_event(), d, JS.toInt(i)));
+      })), i);
     };
   }
 
