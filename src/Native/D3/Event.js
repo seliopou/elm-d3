@@ -57,9 +57,27 @@ Elm.Native.D3.Event.make = function(elm) {
     };
   }
 
+  function elm_handle_focus(signal, fn) {
+    return function(k, selection, i) {
+      return k(selection.on('focus', safeIndexed(i, function(d, i) {
+        return elm.notify(signal.id, A2(fn, d, JS.toInt(i)));
+      })), i);
+    }
+  }
+
+  function elm_handle_blur(signal, fn) {
+    return function(k, selection, i) {
+      return k(selection.on('blur', safeIndexed(i, function(d, i) {
+        return elm.notify(signal.id, A2(fn, d, JS.toInt(i)));
+      })), i);
+    }
+  }
+
   return elm.Native.D3.Event.values = {
     handleMouse : F3(elm_handle_mouse),
     handleKeyboard : F3(elm_handle_keyboard),
-    handleInput : F2(elm_handle_input)
+    handleInput : F2(elm_handle_input),
+    handleFocus : F2(elm_handle_focus),
+    handleBlur : F2(elm_handle_blur)
   };
 };

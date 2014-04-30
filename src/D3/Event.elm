@@ -17,6 +17,9 @@ module D3.Event
   , keypress    -- : KeyboardEvent e a
 
   , input       -- : InputEvent e a
+
+  , focus       -- : BasicHandler e a
+  , blur        -- : BasicHandler e a
   ) where
 
 import D3(..)
@@ -122,3 +125,14 @@ type InputHandler e a = Stream e -> (InputEvent -> a -> Int -> e) -> Selection a
 
 input : InputHandler e a
 input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i ))
+
+-- Focus/Blur handlers
+--
+
+type BasicHandler e a = Stream e -> (a -> Int -> e) -> Selection a
+
+focus : BasicHandler e a
+focus s f = Native.D3.Event.handleFocus s (\a i -> Event (f a i))
+
+blur : BasicHandler e a
+blur s f = Native.D3.Event.handleBlur s (\a i -> Event (f a i))
