@@ -23,7 +23,6 @@ module D3
   , str     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> String -> Selection a
   , num     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> number -> Selection a
   , fun     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> (a -> Int -> String) -> Selection a
-  , opt     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> (a -> Int -> Maybe String) -> Selection a
 
   , transition              -- : Selection a
   , delay                   -- : (a -> Int -> Int) -> Selection a
