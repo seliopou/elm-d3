@@ -189,7 +189,7 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   function elm_attr(name, valfn) {
     name = JS.fromString(name);
-    valfn = safeValfn(valfn, safeOptEvaluator);
+    valfn = safeValfn(valfn, safeEvaluator);
     return function(k, selection, i) {
       return k(selection.attr(name, safeIndexed(i, valfn)), i);
     };
@@ -197,7 +197,7 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   function elm_style(name, valfn) {
     name = JS.fromString(name);
-    valfn = safeValfn(valfn, safeOptEvaluator);
+    valfn = safeValfn(valfn, safeEvaluator);
     return function(k, selection, i) {
       return k(selection.style(name, safeIndexed(i, valfn)), i);
     };
