@@ -16,7 +16,7 @@ module D3
 
   , enter, update, exit     -- : Selection a
   , attr, style             -- : String -> (a -> Int -> String) -> Selection a
-  , property                -- : String -> (a -> Int -> JsonValue) -> Selection a
+  , property                -- : String -> (a -> Int -> Value) -> Selection a
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
   , html, text              -- : (a -> Int -> String) -> Selection a
 
@@ -285,7 +285,7 @@ style = Native.D3.Selection.style
 --
 --   context = context.property(name, fn);
 --
-property : String -> (a -> Int -> JsonValue) -> Selection a
+property : String -> (a -> Int -> Value) -> Selection a
 property = Native.D3.Selection.property
 
 -- Include or exclude the class on each element depending on the result of `fn`.
