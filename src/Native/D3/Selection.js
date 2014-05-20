@@ -49,12 +49,12 @@ Elm.Native.D3.Selection.make = function(elm) {
   elm.Native.D3.Selection = elm.Native.D3.Selection || {};
   if (elm.Native.D3.Selection.values) return elm.Native.D3.Selection.values;
 
-  var JS = Elm.Native.JavaScript.make(elm);
+  var JS = Elm.Native.D3.JavaScript.make(elm);
   var Json = Elm.Native.Json.make(elm);
 
   function safeJson(fn) {
     return function(a, i) {
-      return Json.toJSObject(A2(fn, a, JS.toInt(i)));
+      return Json.toJS(A2(fn, a, JS.toInt(i)));
     };
   }
 
@@ -76,8 +76,6 @@ Elm.Native.D3.Selection.make = function(elm) {
       return JS.fromBool(A2(fn, a, JS.toInt(i)));
     };
   }
-
-  function id(x) { return x; }
 
   function elm_sequence(s1, s2) {
     return function(k, selection, i) {

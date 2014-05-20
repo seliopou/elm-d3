@@ -9,8 +9,6 @@ Elm.Native.D3.Render.make = function(elm) {
 
   var newElement = Elm.Graphics.Element.make(elm).newElement;
 
-  function id(x) { return x; }
-
   function run(k) {
     return function(selection) {
       return k(id, selection);

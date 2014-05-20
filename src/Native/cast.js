@@ -9,3 +9,5 @@ function safeIndexed(i, valfn) {
     ? function(d, _) { return valfn.call(this, d, i); }
     : valfn;
 }
+
+function id(x) { return x; }

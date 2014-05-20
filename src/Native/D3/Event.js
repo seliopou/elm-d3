@@ -10,7 +10,7 @@ Elm.Native.D3.Event.make = function(elm) {
 
   if (elm.Native.D3.Selection.values) return elm.Native.D3.Selection.values;
 
-  var JS = Elm.Native.JavaScript.make(elm);
+  var JS = Elm.Native.D3.JavaScript.make(elm);
 
   function mouse_event() {
     return JS.toRecord({

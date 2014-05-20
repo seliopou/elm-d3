@@ -7,7 +7,7 @@ Elm.Native.D3.Voronoi.make = function(elm) {
   elm.Native.D3.Voronoi = elm.Native.D3.Voronoi || {};
   if (elm.Native.D3.Voronoi.values) return elm.Native.D3.Voronoi.values;
 
-  var JS = Elm.Native.JavaScript.make(elm);
+  var JS = Elm.Native.D3.JavaScript.make(elm);
 
   var voronoi = d3.geom.voronoi()
       .x(function(d) { return d.x; })

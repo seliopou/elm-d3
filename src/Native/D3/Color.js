@@ -7,7 +7,7 @@ Elm.Native.D3.Color.make = function(elm) {
   elm.Native.D3.Color = elm.Native.D3.Color || {};
   if (elm.Native.D3.Color.values) return elm.Native.D3.Color.values;
 
-  var JS = Elm.Native.JavaScript.make(elm);
+  var JS = Elm.Native.D3.JavaScript.make(elm);
 
 
   function elm_create(typ, a, b, c) {

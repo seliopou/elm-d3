@@ -9,7 +9,7 @@ Elm.Native.D3.Transition.make = function(elm) {
   elm.Native.D3.Transition = elm.Native.D3.Transition || {};
   if (elm.Native.D3.Transition.values) return elm.Native.D3.Transition.values;
 
-  var JS = Elm.Native.JavaScript.make(elm);
+  var JS = Elm.Native.D3.JavaScript.make(elm);
 
 
   function safeTransition(fn) {

@@ -1,5 +1,7 @@
 Elm.Native.D3 = {};
 
+import "JavaScript"
+
 import "Render"
 
 import "Color"
