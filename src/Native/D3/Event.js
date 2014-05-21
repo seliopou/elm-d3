@@ -8,7 +8,7 @@ Elm.Native.D3.Event.make = function(elm) {
   elm.Native.D3 = elm.Native.D3 || {};
   elm.Native.D3.Event = elm.Native.D3.Event || {};
 
-  if (elm.Native.D3.Selection.values) return elm.Native.D3.Selection.values;
+  if (elm.Native.D3.Event.values) return elm.Native.D3.Event.values;
 
   var JS = Elm.Native.D3.JavaScript.make(elm);
 
