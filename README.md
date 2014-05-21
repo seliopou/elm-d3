@@ -44,7 +44,7 @@ At the heart of this library is the `Selection a` type. It represents a d3
 selection joined with one or more values of type `a`. Just like in d3, you can
 construct selections using `select` and `selectAll`, and perform operations on
 selections using functions like `attr` and `style`. You can also chain those
-operations together useing the `chain` function or the infix operator `|.`.
+operations together using the `chain` function or the infix operator `|.`.
 Both do the same thing&mdash;in essence, method chaining.
 
 In addition, elm-d3 allows you to bind data to a `Selection a` and specify what
@@ -130,7 +130,7 @@ main = render dims.height dims.width (vis dims margin) <~ Mouse.position
 It's common practice when using d3 to start building your svg document with an
 initial group child element with a transform attribute to setup margins. Pass
 the `svg` function a `Dimensions` record and a `Margins` record and will return
-a `Selection a` that, when renderd, will do just that.
+a `Selection a` that, when rendered, will do just that.
 
 The `boxes` selection demonstrates how to do data joins in elm-d3. You setup
 your initial selection using `selectAll`, and then method chain a call to
