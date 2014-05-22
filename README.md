@@ -1,7 +1,8 @@
 # elm-d3
 
-elm-d3 provides [Elm][elm] bindings for [d3.js][d3], effectively making your d3
-code statically typed, pure, and, reactive, and your widgets composable.
+elm-d3 provides [Elm][elm] bindings for [d3.js][d3]. It enables you create
+type-safe, composable widgets using HTML, SVG, and CSS. D3 acts as a conceptual
+basis for the library, as well as an alternative renderer for Elm.
 
 [elm]: http://elm-lang.org
 [d3]: http://d3js.org
