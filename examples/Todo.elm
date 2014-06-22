@@ -313,19 +313,19 @@ item_edit =
 --
 --   selectAll "li"
 --   |= todoList
-
+--
 -- is the code that creates the Widget. This will create a list of `Item`s from
 -- the `Model` that's bound to the parent, and assert that each one of those
--- `Item`s should be in one-to-one correspondence with the "li" elements that
--- are children of the current parent.  The rest of the code handles the
+-- `Item`s should be in one-to-one correspondence with the <li> elements that
+-- are children of the current parent. The rest of the code handles the
 -- different cases that may arise while maintaining this one-to-one
 -- correspondence: creating, updating, and removing elements.
 --
 --    enter <.> append "li"
 --    |. dblclick events (\e d i -> Edit i)
 --
--- Handles the case when an "li" must be created to for an item. It appends an
--- "li" elemnent to the parent and registers a signal handler. In this case,
+-- Handles the case when an <li> must be created to for an item. It appends an
+-- <li> elemnent to the parent and registers a signal handler. In this case,
 -- the signal handler interprets a user's double-click on the element as
 -- indicating that user wants to edit the `Item` with index `i`.
 --
@@ -335,7 +335,7 @@ item_edit =
 --   exit
 --   |. remove
 --
--- indicates that the remove operation should be applied to all "li" elements
+-- indicates that the remove operation should be applied to all <li> elements
 -- that no longer have a corresponding `Item` in the data bind. The update
 -- operations
 --
@@ -344,8 +344,8 @@ item_edit =
 --   |. classed "completed" (\d i -> d.completed)
 --   |. (sequence item_view item_edit)
 --
--- will be applied to an existing "li" element. The `classed` operations will
--- set the classes of the "li" element appropriately, depending on `d`: the
+-- will be applied to an existing <li> element. The `classed` operations will
+-- set the classes of the <li> element appropriately, depending on `d`: the
 -- `Item` associated with the current element. The final line applies
 -- previously-defined Selections to the element, which may in general modify
 -- element attributes and add children to the element. In this case, the
