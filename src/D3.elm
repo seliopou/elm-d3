@@ -113,10 +113,6 @@ infixl 1 |^
 (|^) : Selection a -> Selection a -> Selection a
 (|^) = nest
 
-infixl 1 |-^
-(|-^) : Selection a -> Widget a b -> Selection a
-(|-^) a b = nest a (embed b)
-
 -- Create a single-element (or empty) selection given a css selector.
 --
 --   select selector
