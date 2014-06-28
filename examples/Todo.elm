@@ -8,7 +8,7 @@
 -- using the following commands:
 --
 --   make
---   elm --make -src-dir=src `./scripts/build-flags` `./scripts/include-css examples/todo.css` examples/Todo.elm
+--   elm --make --src-dir=src `./scripts/build-flags` `./scripts/include-css examples/todo.css` examples/Todo.elm
 --
 -- On OS X, you can then open the file in the browser using the following command:
 --

@@ -7,7 +7,7 @@
 -- following commands:
 --
 --   make
---   elm --make -src-dir=src `./scripts/build-flags` `./scripts/include-css examples/voronoi.css` examples/Voronoi.elm
+--   elm --make --src-dir=src `./scripts/build-flags` `./scripts/include-css examples/voronoi.css` examples/Voronoi.elm
 --
 -- On OS X, you can then open the file in the browser using the following
 -- command:
