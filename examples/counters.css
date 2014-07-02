@@ -1,0 +1,49 @@
+.counter {
+    width: 600px;
+    height: 80px;
+}
+
+.box {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    float: left;
+    text-align: center;
+    line-height: 80px;
+    font-size: 2em;
+}
+
+.creator {
+    width: 600px;
+    height: 80px;
+    background: #B4DD3C;
+
+}
+
+.display {
+    width: 118px;
+    height: 78px;
+    border: 1px dotted grey;
+}
+
+.increment {
+    width: 160px;
+    height: 80px;
+    background: #3FB314;
+}
+
+.decrement {
+    width: 160px;
+    height: 80px;
+    background: #9C1176;
+}
+
+.remove {
+    width: 160px;
+    height: 80px;
+    background: #C61632;
+}
