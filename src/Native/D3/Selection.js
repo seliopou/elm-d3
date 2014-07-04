@@ -223,7 +223,7 @@ Elm.Native.D3.Selection.make = function(elm) {
     };
   }
 
-  return elm.Native.D3.values = {
+  return elm.Native.D3.Selection.values = {
     version : JS.toString(d3.version),
     sequence : F2(elm_sequence),
     chain : F2(elm_chain),
