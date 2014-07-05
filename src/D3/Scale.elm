@@ -1,6 +1,9 @@
 module D3.Scale where
 
-data Scale a
+import Native.D3.Scale
+
+
+data Scale a = Scale
 
 linear : Scale Float
 linear = Native.D3.Scale.linear
@@ -24,10 +27,10 @@ range : Scale a -> [a] -> Scale a
 range = Native.D3.Scale.range
 
 ticks : Scale Float -> Int -> [String]
-ticks = NativeD3.Scale.ticks
+ticks = Native.D3.Scale.ticks
 
 tickFormat : Scale Float -> (Float -> String) -> Scale Float
-tickFormat = NativeD3.Scale.tickFormat
+tickFormat = Native.D3.Scale.tickFormat
 
 nice : Scale Float -> Scale Float
 nice = Native.D3.Scale.nice
