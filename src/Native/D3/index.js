@@ -9,3 +9,5 @@ import "Selection"
 import "Event"
 import "Transition"
 import "Voronoi"
+Elm.Native.D3.Scales = {};
+import "Scales/Quantitative"
