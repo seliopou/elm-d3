@@ -62,7 +62,7 @@ Elm.Native.D3.Scale.Quantitative.make = function (elm) {
         , pow : pow
         , log : log
         , nice : nice
-        , clamp : clamp
+        , clamp : F2(clamp)
         , domain : F2(domain)
         , range : F2(range)
         , ticks : F2(ticks)
