@@ -1,12 +1,11 @@
-Elm.Native.D3.Scale.Quantitative = {};
-Elm.Native.D3.Scale.Quantitative.make = function (elm) {
+Elm.Native.D3.Scale = {};
+Elm.Native.D3.Scale.make = function (elm) {
     'use strict';
 
     elm.Native = elm.Native || {};
     elm.Native.D3 = elm.Native.D3 || {};
     elm.Native.D3.Scale = elm.Native.D3.Scale || {};
-    elm.Native.D3.Scale.Quantitative = elm.Native.D3.Scale.Quantitative || {};
-    if (elm.Native.D3.Scale.Quantitative.values) return elm.Native.D3.Scale.Quantitative.values;
+    if (elm.Native.D3.Scale.values) return elm.Native.D3.Scale.values;
 
     var JS = Elm.Native.D3.JavaScript.make(elm);
 
@@ -55,7 +54,7 @@ Elm.Native.D3.Scale.Quantitative.make = function (elm) {
         return scale.invert(number);
     }
 
-    return elm.Native.D3.Scale.Quantitative.values =
+    return elm.Native.D3.Scale.values =
         { linear : d3.scale.linear()
         , identity : d3.scale.identity()
         , sqrt : d3.scale.sqrt()
