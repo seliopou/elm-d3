@@ -13,7 +13,10 @@ from the Reals and map it to the Reals
 -}
 import Native.D3.Scale
 
+
 data Scale a = Scale
+
+
 {-| Make a linear scale. Nothing fancy here. The default is the identity mapping.
 -}
 linear : Scale Float
@@ -36,6 +39,7 @@ pow = Native.D3.Scale.pow
 -}
 log : Float -> Scale Float
 log = Native.D3.Scale.log
+
 
 
 {-| Change the domain of the function. You may pass in any number of values into
@@ -66,6 +70,7 @@ most extreme value specified in the domain.
 -}
 clamp : Bool -> Scale Float -> Scale Float
 clamp = Native.D3.Scale.clamp
+
 
 
 {-| Apply the scale to a value and it will map the input value to the output range.
