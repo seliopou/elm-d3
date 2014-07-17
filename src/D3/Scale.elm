@@ -89,7 +89,7 @@ invert = Native.D3.Scale.invert
 
 {-| Get a list of where the ticks are on the scale, given a number of ticks you want.
 
-      (linear |> domain [0,10] |> ticks) 3 == [0, 5, 10]
+      ticks (linear |> domain [0,10]) 3 == [0, 5, 10]
 -}
 ticks : Scale Float -> Int ->  [Float]
 ticks = Native.D3.Scale.ticks
