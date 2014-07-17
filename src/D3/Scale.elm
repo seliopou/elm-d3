@@ -75,20 +75,21 @@ clamp = Native.D3.Scale.clamp
 
 {-| Apply the scale to a value and it will map the input value to the output range.
 
-      linear |> domain [0,1] |> range [0,100] |> convert 0.5 == 50
+      let cToF = linear |> domain [0,100] |> range [32,212] |> convert
+      in  cToF -40 => -40
 -}
-convert : Float -> Scale b -> b
+convert : Scale b -> Float -> b
 convert = Native.D3.Scale.convert
 
 {-| Apply the scale to a value in its range to get the corresponding value in
 the domain.
 -}
-invert : Float -> Scale Float -> Float
+invert : Scale Float -> Float -> Float
 invert = Native.D3.Scale.invert
 
 {-| Get a list of where the ticks are on the scale, given a number of ticks you want.
 
-      linear |> domain [0,10] |> ticks 3 == [0, 5, 10]
+      (linear |> domain [0,10] |> ticks) 3 == [0, 5, 10]
 -}
-ticks : Int -> Scale Float -> [Float]
+ticks : Scale Float -> Int ->  [Float]
 ticks = Native.D3.Scale.ticks

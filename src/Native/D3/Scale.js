@@ -29,7 +29,7 @@ Elm.Native.D3.Scale.make = function (elm) {
         return newScale.range(newRange);
     }
 
-    function ticks(nTicks, scale) {
+    function ticks(scale, nTicks) {
         var tempScale = scale.copy();
         return tempScale.ticks(JS.toInt(nTicks));
     }
@@ -44,12 +44,12 @@ Elm.Native.D3.Scale.make = function (elm) {
         return newScale.clamp(JS.toBool(bool));
     }
 
-    function convert(n, scale) {
+    function convert(scale, n) {
         var number = JS.toFloat(n);
         return scale(number);
     }
 
-    function invert(n, scale) {
+    function invert(scale, n) {
         var number = JS.toFloat(n);
         return scale.invert(number);
     }
