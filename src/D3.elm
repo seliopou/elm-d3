@@ -20,9 +20,9 @@ module D3
   , classed                 -- : String -> (a -> Int -> Bool) -> Selection a
   , html, text              -- : (a -> Int -> String) -> Selection a
 
-  , str     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> String -> Selection a
-  , num     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> number -> Selection a
-  , fun     -- : (String -> (a -> Int -> Maybe String) -> Selection a) -> String -> (a -> Int -> String) -> Selection a
+  , str     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> String -> Selection a
+  , num     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> number -> Selection a
+  , fun     -- : (String -> (a -> Int -> String) -> Selection a) -> String -> (a -> Int -> String) -> Selection a
 
   , transition              -- : Selection a
   , delay                   -- : (a -> Int -> Int) -> Selection a
