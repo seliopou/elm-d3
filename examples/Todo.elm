@@ -31,7 +31,7 @@ import String
 -- There are some cases in the code below that should never happen and in fact
 -- cannot ever happen. In other languages, you'd use an `asset false`
 -- expression, or `undefined` to indicate that the case is impossible. In Elm,
--- you can call `Native.Error.throw`.
+-- you can call `Native.Error.raise`.
 --
 import Native.Error
 
@@ -104,7 +104,7 @@ startEdit m i =
 changeEdit : Model -> String -> Model
 changeEdit m d =
   case m.editing of
-    Nothing -> Native.Error.throw "trying to edit while not editing"
+    Nothing -> Native.Error.raise "trying to edit while not editing"
     Just (_, i) -> { m | editing <- Just (d, i) }
 
 -- Complete editing by setting the description of the current edit item to the
@@ -113,7 +113,7 @@ changeEdit m d =
 commitEdit : Model -> Model
 commitEdit m =
   case m.editing of
-    Nothing -> Native.Error.throw "trying to finishing editing while not editing"
+    Nothing -> Native.Error.raise "trying to finishing editing while not editing"
     Just (t, i) -> let m' = setDescription m i t in { m' | editing <- Nothing }
 
 
