@@ -76,7 +76,7 @@ creator =
   |. text (\_ _ -> "create counter")
   |. click events (\_ _ _ -> Create)
 
-counters : Widget Model (Int, Int)
+counters : Selection Model (Int, Int)
 counters =
   selectAll "div.counter"
   |= (\m -> List.sortBy fst (Dict.toList m.dict))

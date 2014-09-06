@@ -15,7 +15,7 @@ type Model = { left : Int, middle : Int, right : Int }
 events : D3.Event.Stream Pos
 events = D3.Event.stream ()
 
-view : Widget Model (Pos, Int)
+view : Selection Model (Pos, Int)
 view =
   selectAll "div"
   |= (\c -> [(Left, c.left), (Middle, c.middle), (Right, c.right)])

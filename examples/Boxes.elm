@@ -19,7 +19,7 @@ svg ds ms =
   |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
-boxes : Widget (number, number) (number, number, String)
+boxes : Selection (number, number) (number, number, String)
 boxes =
   selectAll ".box"
   |= (\(x, y) -> [(x, 0, "cyan"), (0, y, "magenta")])

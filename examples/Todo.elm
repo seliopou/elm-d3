@@ -353,7 +353,7 @@ item_edit =
 -- will display the actual content of each `Item`, and `item_edit` adds editing
 -- functionality to each `Item`.
 --
-items : Widget Model Item
+items : Selection Model Item
 items =
   selectAll "li"
   |= todoList

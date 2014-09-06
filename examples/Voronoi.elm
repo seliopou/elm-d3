@@ -54,7 +54,7 @@ svg ds ms =
   |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
-circles : Widget [D3.Voronoi.Point] D3.Voronoi.Point
+circles : Selection [D3.Voronoi.Point] D3.Voronoi.Point
 circles =
   selectAll "circle"
   |= tail
@@ -65,7 +65,7 @@ circles =
         |. fun attr "cx" (\p _ -> show p.x)
         |. fun attr "cy" (\p _ -> show p.y)
 
-voronoi : Widget [D3.Voronoi.Point] [D3.Voronoi.Point]
+voronoi : Selection [D3.Voronoi.Point] [D3.Voronoi.Point]
 voronoi =
   selectAll "path"
   |= cells

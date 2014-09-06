@@ -22,7 +22,7 @@ svg ds ms =
 
 -- Move the mouse to the left to right to remove or add circles. Move the mouse
 -- up and down to change the brightness of the circles.
-circles : Widget (number, number) number
+circles : Selection (number, number) number
 circles =
   selectAll "circle"
   |= (\(x, y) -> repeat (x // 50) y)

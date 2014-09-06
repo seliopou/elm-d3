@@ -45,7 +45,6 @@ import Native.D3.Transition
 
 
 data Selection a b = Selection
-type Widget a b = Selection a b
 
 version : String
 version = Native.D3.Selection.version
@@ -180,13 +179,13 @@ remove = Native.D3.Selection.remove
 --
 --   function(p) { return p.s().bind(f); }
 --
-bind : Selection a b -> (b -> [c]) -> Widget a c
+bind : Selection a b -> (b -> [c]) -> Selection a c
 bind s f = Native.D3.Selection.bind s f
 
 -- Infix operator alias for bind.
 --
 infixl 6 |=
-(|=) : Selection a b -> (b -> [c]) -> Widget a c
+(|=) : Selection a b -> (b -> [c]) -> Selection a c
 (|=) = bind
 
 -- Chain is the Widget-analogue of chain on Selections. It will chain Selection
@@ -201,13 +200,13 @@ infixl 6 |=
 --     return w(p).s();
 --   }
 --
-chain' : Widget a b -> Selection b c -> Widget a b
+chain' : Selection a b -> Selection b c -> Selection a b
 chain' = Native.D3.Selection.chain_widget
 
 -- Infix operator alias for chain'.
 --
 infixl 2 |-
-(|-) : Widget a b -> Selection b c -> Widget a b
+(|-) : Selection a b -> Selection b c -> Selection a b
 (|-) = chain'
 
 -- Casts a `Widget a b` to a `Selection a`. Wrapping a value with this call
@@ -220,7 +219,7 @@ infixl 2 |-
 --
 --   w(context);
 --
-embed : Widget a b -> Selection a b
+embed : Selection a b -> Selection a b
 embed = Native.D3.Selection.embed
 
 -- Create an enter selection.
