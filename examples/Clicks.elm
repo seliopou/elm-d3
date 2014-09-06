@@ -41,4 +41,4 @@ controller =
   D3.Event.folde transform initial events
 
 main : Signal Element
-main = render 900 200 (embed view) <~ controller
+main = render 900 200 view <~ controller

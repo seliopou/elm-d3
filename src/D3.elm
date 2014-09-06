@@ -12,7 +12,6 @@ module D3
 
   , bind                    -- : Selection a -> (a -> [b]) -> Widget a b
   , chain'                  -- : Widget a b -> Selection b -> Widget a b
-  , embed                   -- : Widget a b -> Selection a
 
   , enter, update, exit     -- : Selection a
   , attr, style             -- : String -> (a -> Int -> String) -> Selection a
@@ -208,19 +207,6 @@ chain' = Native.D3.Selection.chain_widget
 infixl 2 |-
 (|-) : Selection a b -> Selection b c -> Selection a b
 (|-) = chain'
-
--- Casts a `Widget a b` to a `Selection a`. Wrapping a value with this call
--- disallows further nested chanining, and allows you to embed it on other
--- selection.
---
--- This is the only way to use a `Widget a b` type.
---
--- equivalent to
---
---   w(context);
---
-embed : Selection a b -> Selection a b
-embed = Native.D3.Selection.embed
 
 -- Create an enter selection.
 --

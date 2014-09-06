@@ -134,13 +134,6 @@ Elm.Native.D3.Selection.make = function(elm) {
     };
   }
 
-  function elm_embed(w) {
-    return function(k, selection, i) {
-      w(id, selection, i);
-      return k(selection, i);
-    }
-  }
-
   function elm_enter(k, selection, i) {
     return k(selection.enter(), i);
   }
@@ -233,7 +226,6 @@ Elm.Native.D3.Selection.make = function(elm) {
     static_ : elm_static,
     bind : F2(elm_bind),
     chain_widget : F2(elm_chain_widget),
-    embed : elm_embed,
     enter : elm_enter,
     exit : elm_exit,
     update : elm_update,

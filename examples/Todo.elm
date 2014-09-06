@@ -395,7 +395,7 @@ content =
        |. str attr "type" "checkbox"
     |^ static "ul"
        |. str attr "id" "todo-list"
-       |. embed items
+       |. items
   in
   sequence header main
 
@@ -426,7 +426,7 @@ footer =
   static "footer" <.> str attr "id" "footer"
   |^ count
   |^ static "ul" <.> str attr "id" "filters"
-     |. embed filters
+     |. filters
 
 todoapp : Selection Model Model
 todoapp =

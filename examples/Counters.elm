@@ -104,7 +104,7 @@ view : Selection Model
 view =
   let counters' =
     static "div" <.> str attr "class" "counters"
-    |. embed counters
+    |. counters
   in
   sequence creator counters'
 

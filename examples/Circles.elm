@@ -49,7 +49,7 @@ translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
 vis dims margin =
   svg dims margin
-  |. embed circles
+  |. circles
 
 main : Signal Element
 main = render dims.width dims.height (vis dims margin) <~ Mouse.position
