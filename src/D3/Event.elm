@@ -59,7 +59,7 @@ type MouseEvent = {
   shiftKey : Bool
 }
 
-type MouseHandler e a = Stream e -> (MouseEvent -> a -> Int -> e) -> Selection a
+type MouseHandler e a = Stream e -> (MouseEvent -> a -> Int -> e) -> Selection a a
 
 handleMouse : String -> MouseHandler e a
 handleMouse e s f = Native.D3.Event.handleMouse e s (\m a i -> Event (f m a i))
@@ -102,7 +102,7 @@ type KeyboardEvent = {
   shiftKey : Bool
 }
 
-type KeyboardHandler e a = Stream e -> (KeyboardEvent -> a -> Int -> e) -> Selection a
+type KeyboardHandler e a = Stream e -> (KeyboardEvent -> a -> Int -> e) -> Selection a a
 
 handleKeyboard : String -> KeyboardHandler e a
 handleKeyboard e s f = Native.D3.Event.handleKeyboard e s (\m a i -> Event (f m a i))
@@ -122,7 +122,7 @@ keypress = handleKeyboard "keypress"
 
 type InputEvent = String
 
-type InputHandler e a = Stream e -> (InputEvent -> a -> Int -> e) -> Selection a
+type InputHandler e a = Stream e -> (InputEvent -> a -> Int -> e) -> Selection a a
 
 input : InputHandler e a
 input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i ))
@@ -130,7 +130,7 @@ input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i ))
 -- Focus/Blur handlers
 --
 
-type BasicHandler e a = Stream e -> (a -> Int -> e) -> Selection a
+type BasicHandler e a = Stream e -> (a -> Int -> e) -> Selection a a
 
 focus : BasicHandler e a
 focus s f = Native.D3.Event.handleFocus s (\a i -> Event (f a i))

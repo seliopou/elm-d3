@@ -12,7 +12,7 @@ dims   = { height = size - margin.top - margin.bottom
 type Dimensions = { height : Int, width : Int }
 type Margins = { top : Int, left : Int, right : Int, bottom : Int }
 
-svg : Dimensions -> Margins -> Selection a
+svg : Dimensions -> Margins -> Selection a a
 svg ds ms =
   static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)

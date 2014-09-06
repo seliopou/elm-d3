@@ -46,7 +46,7 @@ dims   = { height = height - margin.top - margin.bottom
 -- height of the <svg> element.
 --
 
-svg : Dimensions -> Margins -> Selection a
+svg : Dimensions -> Margins -> Selection a a
 svg ds ms =
   static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)

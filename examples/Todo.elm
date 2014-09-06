@@ -238,7 +238,7 @@ todoList m =
 --
 -- Note that the expression in no way depends on the data bound to it. This
 -- expression could in fact be used in any context, so it has the type
--- `Selection a`. The use of the "static" operator indicates that a div element
+-- `Selection a a`. The use of the "static" operator indicates that a div element
 -- should be added once and only once for the current datum. What this means is
 -- clearer when considering the subexpression that creates a <label> element:
 --
@@ -276,7 +276,7 @@ todoList m =
 --     <button class="destroy" />
 --   </div>
 --
-item_view : Selection Item
+item_view : Selection Item Item
 item_view =
   static "div"
   |. str attr "class" "view"
@@ -295,7 +295,7 @@ item_view =
 -- item. This uses the same general concepts as item_view above, while making
 -- use of the new `keyup` and `blur` event handlers.
 --
-item_edit : Selection Item
+item_edit : Selection Item Item
 item_edit =
   static "input"
   |. str attr "class" "edit"
@@ -370,7 +370,7 @@ items =
 -- explanations will be omitted. Continue down to "The Application" section to
 -- see how everything fits together.
 --
-content : Selection Model
+content : Selection Model Model
 content =
   let header =
     static "header"
@@ -399,7 +399,7 @@ content =
   in
   sequence header main
 
-footer : Selection Model
+footer : Selection Model Model
 footer =
   let count =
     static "span"
@@ -428,13 +428,13 @@ footer =
   |^ static "ul" <.> str attr "id" "filters"
      |. embed filters
 
-todoapp : Selection Model
+todoapp : Selection Model Model
 todoapp =
   static "section" <.> str attr "id" "todoapp"
   |^ content
   |^ footer
 
-low_footer : Selection a
+low_footer : Selection a a
 low_footer =
   let content ="
   <p>Double-click to edit a todo</p>

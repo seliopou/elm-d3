@@ -70,7 +70,7 @@ events = stream ()
 -- The View
 --
 
-creator : Selection a
+creator : Selection a a
 creator =
   static "div" <.> str attr "class" "box creator"
   |. text (\_ _ -> "create counter")
