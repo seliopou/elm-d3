@@ -112,12 +112,6 @@ infixl 4 <.>
 nest : Selection a b -> Selection b c -> Selection a b
 nest a b = chain a (sequence b update)
 
--- Infix operator alias for nest
---
-infixl 1 |^
-(|^) : Selection a b -> Selection b c -> Selection a b
-(|^) = nest
-
 -- Infix operator alias for chain'.
 --
 infixl 2 |-

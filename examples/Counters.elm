@@ -82,12 +82,12 @@ counters =
   |= (\m -> List.sortBy fst (Dict.toList m.dict))
      |- (enter <.> append "div"
         |. str attr "class" "counter"
-        |^ (append "div" <.> str attr "class" "box display")
-        |^ (append "div" <.> str attr "class" "box increment"
+        |- (append "div" <.> str attr "class" "box display")
+        |- (append "div" <.> str attr "class" "box increment"
            |. text (\_ _ -> "+"))
-        |^ (append "div" <.> str attr "class" "box decrement"
+        |- (append "div" <.> str attr "class" "box decrement"
            |. text (\_ _ -> "-"))
-        |^ (append "div" <.> str attr "class" "box remove"
+        |- (append "div" <.> str attr "class" "box remove"
            |. html (\_ _ -> "&#10007;")))
      |- update <.> select "div.display"
         |. text (\(_, d) _ -> show d)

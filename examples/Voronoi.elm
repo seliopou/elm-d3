@@ -100,8 +100,8 @@ randomPoints n =
 
 vis dims margin =
   svg dims margin
-  |^ voronoi
-  |^ circles
+  |- voronoi
+  |- circles
 
 main : Signal Element
 main =

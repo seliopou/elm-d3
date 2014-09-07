@@ -280,14 +280,14 @@ item_view : Selection Item Item
 item_view =
   static "div"
   |. str attr "class" "view"
-  |^ static "input"
+  |- static "input"
      |. str attr "class" "toggle"
      |. str attr "type" "checkbox"
      |. property "checked" (\d i -> Json.Boolean d.completed)
      |. click events (\e d i -> if d.completed then Uncheck i else Check i)
-  |^ static "label"
+  |- static "label"
      |. text (\d _ -> d.text)
-  |^ static "button"
+  |- static "button"
      |. str attr "class" "destroy"
      |. click events (\e d i -> Delete i)
 
@@ -375,9 +375,9 @@ content =
   let header =
     static "header"
     |. str attr "id" "header"
-    |^ static "h1"
+    |- static "h1"
        |. text (\_ _ -> "todo")
-    |^ static "input"
+    |- static "input"
        |. str attr "id" "new-todo"
        |. str attr "autofocus" ""
        |. str attr "placeholder" "What needs to be done?"
@@ -390,10 +390,10 @@ content =
   in
   let main =
     static "section" <.> str attr "id" "main"
-    |^ static "input"
+    |- static "input"
        |. str attr "id" "toggle-all"
        |. str attr "type" "checkbox"
-    |^ static "ul"
+    |- static "ul"
        |. str attr "id" "todo-list"
        |. items
   in
@@ -424,15 +424,15 @@ footer =
           |. remove
   in
   static "footer" <.> str attr "id" "footer"
-  |^ count
-  |^ static "ul" <.> str attr "id" "filters"
+  |- count
+  |- static "ul" <.> str attr "id" "filters"
      |. filters
 
 todoapp : Selection Model Model
 todoapp =
   static "section" <.> str attr "id" "todoapp"
-  |^ content
-  |^ footer
+  |- content
+  |- footer
 
 low_footer : Selection a a
 low_footer =
