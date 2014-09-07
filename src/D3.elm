@@ -11,7 +11,6 @@ module D3
   , remove                  -- : Selection a
 
   , bind                    -- : Selection a -> (a -> [b]) -> Widget a b
-  , chain'                  -- : Widget a b -> Selection b -> Widget a b
 
   , enter, update, exit     -- : Selection a
   , attr, style             -- : String -> (a -> Int -> String) -> Selection a
@@ -119,6 +118,12 @@ infixl 1 |^
 (|^) : Selection a b -> Selection b c -> Selection a b
 (|^) = nest
 
+-- Infix operator alias for chain'.
+--
+infixl 2 |-
+(|-) : Selection a b -> Selection b c -> Selection a b
+(|-) = nest
+
 -- Create a single-element (or empty) selection given a css selector.
 --
 --   select selector
@@ -186,27 +191,6 @@ bind s f = Native.D3.Selection.bind s f
 infixl 6 |=
 (|=) : Selection a b -> (b -> [c]) -> Selection a c
 (|=) = bind
-
--- Chain is the Widget-analogue of chain on Selections. It will chain Selection
--- onto the result of the widget, and then return the original Selection the
--- Widget produced.
---
---   chain' w s
---
--- is equivalent to
---
---   function(p) {
---     return w(p).s();
---   }
---
-chain' : Selection a b -> Selection b c -> Selection a b
-chain' = Native.D3.Selection.chain_widget
-
--- Infix operator alias for chain'.
---
-infixl 2 |-
-(|-) : Selection a b -> Selection b c -> Selection a b
-(|-) = chain'
 
 -- Create an enter selection.
 --
