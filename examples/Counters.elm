@@ -70,13 +70,13 @@ events = stream ()
 -- The View
 --
 
-creator : Selection a a
+creator : D3 a a
 creator =
   static "div" <.> str attr "class" "box creator"
   |. text (\_ _ -> "create counter")
   |. click events (\_ _ _ -> Create)
 
-counters : Selection Model (Int, Int)
+counters : D3 Model (Int, Int)
 counters =
   selectAll "div.counter"
   |= (\m -> List.sortBy fst (Dict.toList m.dict))
@@ -100,7 +100,7 @@ counters =
      |- exit
         |. remove
 
-view : Selection Model
+view : D3 Model Model
 view =
   let counters' =
     static "div" <.> str attr "class" "counters"

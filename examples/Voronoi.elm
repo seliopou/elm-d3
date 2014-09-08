@@ -46,7 +46,7 @@ dims   = { height = height - margin.top - margin.bottom
 -- height of the <svg> element.
 --
 
-svg : Dimensions -> Margins -> Selection a a
+svg : Dimensions -> Margins -> D3 a a
 svg ds ms =
   static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
@@ -54,7 +54,7 @@ svg ds ms =
   |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
-circles : Selection [D3.Voronoi.Point] D3.Voronoi.Point
+circles : D3 [D3.Voronoi.Point] D3.Voronoi.Point
 circles =
   selectAll "circle"
   |= tail
@@ -65,7 +65,7 @@ circles =
         |. fun attr "cx" (\p _ -> show p.x)
         |. fun attr "cy" (\p _ -> show p.y)
 
-voronoi : Selection [D3.Voronoi.Point] [D3.Voronoi.Point]
+voronoi : D3 [D3.Voronoi.Point] [D3.Voronoi.Point]
 voronoi =
   selectAll "path"
   |= cells
