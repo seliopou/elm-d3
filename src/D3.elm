@@ -177,14 +177,14 @@ remove = Native.D3.Selection.remove
 --
 --   function(p) { return p.s().bind(f); }
 --
-bind : Selection a b -> (b -> [c]) -> Selection a c
-bind s f = Native.D3.Selection.bind s f
+bind : (a -> [b]) -> Selection a b
+bind f = Native.D3.Selection.bind f
 
 -- Infix operator alias for bind.
 --
 infixl 6 |=
 (|=) : Selection a b -> (b -> [c]) -> Selection a c
-(|=) = bind
+(|=) s f = s <.> bind f
 
 -- Create an enter selection.
 --
