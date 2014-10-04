@@ -25,7 +25,7 @@ svg ds ms =
 circles : Widget (number, number) number
 circles =
   selectAll "circle"
-  |= (\(x, y) -> repeat (x `div` 50) y)
+  |= (\(x, y) -> repeat (x // 50) y)
      |- enter <.> append "circle"
         |. fun attr "fill" color
         |. num attr "r"    0

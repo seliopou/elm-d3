@@ -20,6 +20,7 @@ module D3.Event
 
   , focus       -- : BasicHandler e a
   , blur        -- : BasicHandler e a
+  , Stream
   ) where
 
 import D3(..)

@@ -28,6 +28,12 @@ module D3
   , delay                   -- : (a -> Int -> Int) -> Selection a
   , duration                -- : (a -> Int -> Int) -> Selection a
   , Selection
+  , Widget
+  , (|.)
+  , (<.>)
+  , (|^)
+  , (|-)
+  , (|=)
   ) where
 
 import Json(..)

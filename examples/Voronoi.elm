@@ -72,7 +72,7 @@ voronoi =
      |- enter <.> append "path"
      |- update
         |. fun attr "d" (\ps _ -> path ps)
-        |. fun attr "class" (\_ i -> "q" ++ (show (mod i 9)) ++ "-9")
+        |. fun attr "class" (\_ i -> "q" ++ (show ((%) i 9)) ++ "-9")
 
 cells : [D3.Voronoi.Point] -> [[D3.Voronoi.Point]]
 cells = D3.Voronoi.cellsWithClipping margin.right margin.top dims.width dims.height
