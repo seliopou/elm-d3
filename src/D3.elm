@@ -27,6 +27,13 @@ module D3
   , transition              -- : Selection a
   , delay                   -- : (a -> Int -> Int) -> Selection a
   , duration                -- : (a -> Int -> Int) -> Selection a
+  , Selection
+  , Widget
+  , (|.)
+  , (<.>)
+  , (|^)
+  , (|-)
+  , (|=)
   ) where
 
 import Json(..)

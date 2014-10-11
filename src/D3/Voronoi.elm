@@ -1,6 +1,7 @@
 module D3.Voronoi
   ( cells
   , cellsWithClipping
+  , Point
   ) where
 
 import Native.D3.Voronoi
