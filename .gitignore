@@ -6,3 +6,5 @@ node_modules/
 elm-d3.js
 elm-d3.runtime.js
 elm-d3.library.js
+.zedstate
+tags
