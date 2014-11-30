@@ -9,50 +9,36 @@ Elm.Native.D3.Scale.make = function (elm) {
 
     var JS = Elm.Native.D3.JavaScript.make(elm);
 
-    function pow(exponent) {
-        return d3.scale.pow().exponent(JS.toFloat(exponent));
+    function pow(k) { return d3.scale.pow().exponent(JS.toFloat(k)); }
+    function log(k) { return d3.scale.log().base(JS.toFloat(k)); }
+
+    function domain(d, s) {
+      return s.copy().domain(JS.fromList(d));
     }
 
-    function log(base) {
-        return d3.scale.log().base(JS.toFloat(base));
+    function range(d, s) {
+      return s.copy().range(JS.fromList(d));
     }
 
-    function domain(domArray, scale) {
-        var newScale = scale.copy();
-        var newDomain = JS.fromList(domArray);
-        return newScale.domain(newDomain);
+    function ticks(s, n) {
+      return s.copy().ticks(JS.toInt(n));
     }
 
-    function range(rangeArray, scale) {
-        var newScale = scale.copy();
-        var newRange = JS.fromList(rangeArray);
-        return newScale.range(newRange);
+    function tickFormat(s, f) {
+      var g = function(x) { return JS.fromString(f(x)); };
+      return s.copy().tickformat(g);
     }
 
-    function ticks(scale, nTicks) {
-        var tempScale = scale.copy();
-        return tempScale.ticks(JS.toInt(nTicks));
+    function nice(s) {
+      return s.copy().nice();
     }
 
-    function nice(scale) {
-        var newScale = scale.copy();
-        return newScale.nice();
+    function clamp(b, s) {
+      return s.copy().clamp(JS.toBool(b));
     }
 
-    function clamp(bool, scale) {
-        var newScale = scale.copy();
-        return newScale.clamp(JS.toBool(bool));
-    }
-
-    function convert(scale, n) {
-        var number = JS.toFloat(n);
-        return scale(number);
-    }
-
-    function invert(scale, n) {
-        var number = JS.toFloat(n);
-        return scale.invert(number);
-    }
+    function convert(s, n) { return s(JS.toFloat(n)); }
+    function invert(s, n) { return s.invert(JS.toFloat(n)); }
 
     return elm.Native.D3.Scale.values =
         { linear : d3.scale.linear()
