@@ -68,7 +68,7 @@ circles =
 voronoi : D3 [D3.Voronoi.Point] [D3.Voronoi.Point]
 voronoi =
   selectAll "path"
-  |= cells
+  |. bind cells
      |- enter <.> append "path"
      |- update
         |. fun attr "d" (\ps _ -> path ps)
