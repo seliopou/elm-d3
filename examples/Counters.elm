@@ -70,24 +70,24 @@ events = stream ()
 -- The View
 --
 
-creator : Selection a
+creator : D3 a a
 creator =
   static "div" <.> str attr "class" "box creator"
   |. text (\_ _ -> "create counter")
   |. click events (\_ _ _ -> Create)
 
-counters : Widget Model (Int, Int)
+counters : D3 Model (Int, Int)
 counters =
   selectAll "div.counter"
   |= (\m -> List.sortBy fst (Dict.toList m.dict))
      |- (enter <.> append "div"
         |. str attr "class" "counter"
-        |^ (append "div" <.> str attr "class" "box display")
-        |^ (append "div" <.> str attr "class" "box increment"
+        |- (append "div" <.> str attr "class" "box display")
+        |- (append "div" <.> str attr "class" "box increment"
            |. text (\_ _ -> "+"))
-        |^ (append "div" <.> str attr "class" "box decrement"
+        |- (append "div" <.> str attr "class" "box decrement"
            |. text (\_ _ -> "-"))
-        |^ (append "div" <.> str attr "class" "box remove"
+        |- (append "div" <.> str attr "class" "box remove"
            |. html (\_ _ -> "&#10007;")))
      |- update <.> select "div.display"
         |. text (\(_, d) _ -> show d)
@@ -100,11 +100,11 @@ counters =
      |- exit
         |. remove
 
-view : Selection Model
+view : D3 Model Model
 view =
   let counters' =
     static "div" <.> str attr "class" "counters"
-    |. embed counters
+    |. counters
   in
   sequence creator counters'
 

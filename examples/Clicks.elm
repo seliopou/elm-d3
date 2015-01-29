@@ -15,7 +15,7 @@ type Model = { left : Int, middle : Int, right : Int }
 events : D3.Event.Stream Pos
 events = D3.Event.stream ()
 
-view : Widget Model (Pos, Int)
+view : D3 Model (Pos, Int)
 view =
   selectAll "div"
   |= (\c -> [(Left, c.left), (Middle, c.middle), (Right, c.right)])
@@ -41,4 +41,4 @@ controller =
   D3.Event.folde transform initial events
 
 main : Signal Element
-main = render 900 200 (embed view) <~ controller
+main = render 900 200 view <~ controller

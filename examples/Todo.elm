@@ -221,9 +221,9 @@ todoList m =
         Nothing)
      m.items
 
--- A D3 Selection that, when rendered, will create an HTML fragment to display
--- and interact with an Item. The type `Selection Item` indicates that a list
--- of `Item`s is bound to current document subtree. This Selection will
+-- A D3 selection that, when rendered, will create an HTML fragment to display
+-- and interact with an Item. The type `D3 Item Item` indicates that a list
+-- of `Item`s is bound to current document subtree. This selection will
 -- therefor have access to the `Item` that is bound to its parent element, or
 -- "context", as well as its index.
 --
@@ -238,7 +238,7 @@ todoList m =
 --
 -- Note that the expression in no way depends on the data bound to it. This
 -- expression could in fact be used in any context, so it has the type
--- `Selection a`. The use of the "static" operator indicates that a div element
+-- `D3 a a`. The use of the "static" operator indicates that a div element
 -- should be added once and only once for the current datum. What this means is
 -- clearer when considering the subexpression that creates a <label> element:
 --
@@ -255,7 +255,7 @@ todoList m =
 -- of the item.The unused argument `i` is the item's index in the list of data
 -- bound the current document subtree. The "static" keyword ensures that there
 -- is only one <label> added for item. If "append" were used here instead, then
--- the Selection would create a new element every time it was rerendered.
+-- the selection would create a new element every time it was rerendered.
 --
 -- Event handlers are not written inline. The expression:
 --
@@ -267,7 +267,7 @@ todoList m =
 -- stream. This application-level event will then be handled by an explict
 -- event loop involving the `transform` function defined above.
 --
--- When this Selection is rendered, it will create a document fragment that looks
+-- When this selection is rendered, it will create a document fragment that looks
 -- something like this, with event handlers and properties omitted:
 --
 --   <div class="view">
@@ -276,26 +276,26 @@ todoList m =
 --     <button class="destroy" />
 --   </div>
 --
-item_view : Selection Item
+item_view : D3 Item Item
 item_view =
   static "div"
   |. str attr "class" "view"
-  |^ static "input"
+  |- static "input"
      |. str attr "class" "toggle"
      |. str attr "type" "checkbox"
      |. property "checked" (\d i -> Json.Boolean d.completed)
      |. click events (\e d i -> if d.completed then Uncheck i else Check i)
-  |^ static "label"
+  |- static "label"
      |. text (\d _ -> d.text)
-  |^ static "button"
+  |- static "button"
      |. str attr "class" "destroy"
      |. click events (\e d i -> Delete i)
 
--- A D3 Selection that, when rendered, will create an HTML fragment to edit an
+-- A D3 selection that, when rendered, will create an HTML fragment to edit an
 -- item. This uses the same general concepts as item_view above, while making
 -- use of the new `keyup` and `blur` event handlers.
 --
-item_edit : Selection Item
+item_edit : D3 Item Item
 item_edit =
   static "input"
   |. str attr "class" "edit"
@@ -309,7 +309,7 @@ item_edit =
   |. blur events (\d i -> CancelEdit)
 
 -- A D3 Widget that will bind a new set of data to its subtree based on the
--- data bound to the parent Selection. The breakdown:
+-- data bound to the parent selection. The breakdown:
 --
 --   selectAll "li"
 --   |= todoList
@@ -347,13 +347,13 @@ item_edit =
 -- will be applied to an existing <li> element. The `classed` operations will
 -- set the classes of the <li> element appropriately, depending on `d`: the
 -- `Item` associated with the current element. The final line applies
--- previously-defined Selections to the element, which may in general modify
+-- previously-defined selections to the element, which may in general modify
 -- element attributes and add children to the element. In this case, the
--- behavior of the Selections is know, as they're defined above: `item_view`
+-- behavior of the selections is know, as they're defined above: `item_view`
 -- will display the actual content of each `Item`, and `item_edit` adds editing
 -- functionality to each `Item`.
 --
-items : Widget Model Item
+items : D3 Model Item
 items =
   selectAll "li"
   |= todoList
@@ -370,14 +370,14 @@ items =
 -- explanations will be omitted. Continue down to "The Application" section to
 -- see how everything fits together.
 --
-content : Selection Model
+content : D3 Model Model
 content =
   let header =
     static "header"
     |. str attr "id" "header"
-    |^ static "h1"
+    |- static "h1"
        |. text (\_ _ -> "todo")
-    |^ static "input"
+    |- static "input"
        |. str attr "id" "new-todo"
        |. str attr "autofocus" ""
        |. str attr "placeholder" "What needs to be done?"
@@ -390,16 +390,16 @@ content =
   in
   let main =
     static "section" <.> str attr "id" "main"
-    |^ static "input"
+    |- static "input"
        |. str attr "id" "toggle-all"
        |. str attr "type" "checkbox"
-    |^ static "ul"
+    |- static "ul"
        |. str attr "id" "todo-list"
-       |. embed items
+       |. items
   in
   sequence header main
 
-footer : Selection Model
+footer : D3 Model Model
 footer =
   let count =
     static "span"
@@ -424,17 +424,17 @@ footer =
           |. remove
   in
   static "footer" <.> str attr "id" "footer"
-  |^ count
-  |^ static "ul" <.> str attr "id" "filters"
-     |. embed filters
+  |- count
+  |- static "ul" <.> str attr "id" "filters"
+     |. filters
 
-todoapp : Selection Model
+todoapp : D3 Model Model
 todoapp =
   static "section" <.> str attr "id" "todoapp"
-  |^ content
-  |^ footer
+  |- content
+  |- footer
 
-low_footer : Selection a
+low_footer : D3 a a
 low_footer =
   let content ="
   <p>Double-click to edit a todo</p>
@@ -449,8 +449,8 @@ low_footer =
 -- The Application
 --
 
--- The view is the composition of two Selections defined above, each rendered
--- as children of the root element provided by the Elm runtime.
+-- The view is the composition of two D3 selections defined above, each
+-- rendered as children of the root element provided by the Elm runtime.
 --
 view = sequence todoapp low_footer
 

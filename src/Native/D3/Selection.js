@@ -116,29 +116,10 @@ Elm.Native.D3.Selection.make = function(elm) {
 
   /* NB: Index bookkeeping is different, as bind ignores the index of the
    * context. */
-  function elm_bind(s, fn) {
+  function elm_bind(fn) {
     return function(k, selection, i) {
-      return s(function(_selection, _) {
-        var bind = _selection.data(function (d) { return JS.fromList(fn(d)); });
-        return k(bind);
-      }, selection, i);
+      return k(selection.data(function(d) { return JS.fromList(fn(d)); }));
     };
-  }
-
-  function elm_chain_widget(w, s) {
-    return function(k, selection, i) {
-      return w(function(_selection, j) {
-        s(id, _selection, j);
-        return k(_selection, j);
-      }, selection, i);
-    };
-  }
-
-  function elm_embed(w) {
-    return function(k, selection, i) {
-      w(id, selection, i);
-      return k(selection, i);
-    }
   }
 
   function elm_enter(k, selection, i) {
@@ -231,9 +212,7 @@ Elm.Native.D3.Selection.make = function(elm) {
     selectAll : elm_selectAll,
     append : elm_append,
     static_ : elm_static,
-    bind : F2(elm_bind),
-    chain_widget : F2(elm_chain_widget),
-    embed : elm_embed,
+    bind : elm_bind,
     enter : elm_enter,
     exit : elm_exit,
     update : elm_update,

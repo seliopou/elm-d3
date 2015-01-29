@@ -39,142 +39,99 @@ If you're not using OS X, the last command won't work. In that case open
 system. Once the page is open, move your mouse left and right to add and remove
 circles, and move your mouse up and down to change their brightness.
 
-## Usage
+## Conceptual Prerequisites
 
-At the heart of this library is the `Selection a` type. It represents a d3
-selection joined with one or more values of type `a`. Just like in d3, you can
-construct selections using `select` and `selectAll`, and perform operations on
-selections using functions like `attr` and `style`. You can also chain those
-operations together using the `chain` function or the infix operator `|.`.
-Both do the same thing&mdash;in essence, method chaining.
+In order to effectively use elm-d3, you should be familiar with the core
+concepts of D3.js, including data joins, nested selections, and reusable
+charts. The following series of blog posts by [@mbostock][] introduce these
+concepts quite nicely, and independently of elm-d3 should be ready by anbody
+that is interested developing their D3.js skills:
 
-In addition, elm-d3 allows you to bind data to a `Selection a` and specify what
-should happen when you add, update, or remove data from that selection. You do
-this by using the `bind` function, or the `|=` infix operator, which takes a
-`Selection a` as its first argument, a function `a -> [b]` as its second, and
-produces a `Widget a b`. A `Widget a b` is in essence a `Selection b` that can
-be nested in a `Selection a` in a type-safe way. However, in order to chain
-`Selection b`s onto a `Widget a b`, you have to use the `|-` operator. This
-behaves a bit diferently than `|.` as it returns the original `Widget a b`
-rather than than `Selection b` that is its second argument. You can see an
-[example of this below][1].
+* [Thinking in Joins][join]
+* [Nested Selections][nest]
+* [Towards Reusable Charts][chart]
 
-To use a `Widget a b`, you must apply the `embed` function to it, which will
-turn it into a `Selection a`.
-
-[1]: #example
-
-Creating a `Selection a` doesn't actually draw anything on the screen. Think of
-it more along the lines of a [reusable chart][chart] that you can build up
-incrementally. In order to render a `Selection a`, you have to pass it to the
-`render` function somewhere within the `main` entry point of your Elm program.
-
+[join]: http://bost.ocks.org/mike/join/
+[nest]: http://bost.ocks.org/mike/nest/
 [chart]: http://bost.ocks.org/mike/chart/
 
-### Example
+[@mbostock]: https://twitter.com/mbostock
 
-Here's an example of using elm-d3 to draw two rectangles. One follows the
-x-component of your mouse position, and the other follows y-component of your
-mouse position. You can find this example in the `examples` directory of this
-repository.
+## Usage
 
-[black]: http://rampantgames.com/blog/2004/10/black-triangle.html
+elm-d3 is designed to be a very literal interpretation of the D3.js API. In
+fact, any D3.js code that uses only the [Core Selection API][core] should be
+fairly straightforward to port over to elm-d3. For example, here's a fragment
+of code taken from the [Voronoi Diagram example][voronoi] ([original D3.js
+version][voronoi-original]):
 
 ```haskell
-module Boxes where
-
-import D3(..)
-import Mouse
-
-size   = 300
-margin = { top = 10, left = 10, right = 10, bottom = 10 }
-dims   = { height = size - margin.top - margin.bottom
-         , width  = size - margin.left - margin.right }
-
-type Dimensions = { height : Float, width : Float }
-type Margins = { top : Float, left : Float, right : Float, bottom : Float }
-
-svg : Dimensions -> Margins -> Selection a
-svg ds ms =
-  static "svg"
-  |. num attr "height" (ds.height + ms.top + ms.bottom)
-  |. num attr "width"  (ds.width  + ms.left + ms.right)
-  |. static "g"
-     |. str attr "transform" (translate margin.left margin.top)
-
-boxes : Widget (number, number) (number, number, String)
-boxes =
-  selectAll ".box"
-  |= (\(x, y) -> [(x, 0, "cyan"), (0, y, "magenta")])
-     |- enter <.> append "rect"
-        |. str attr "class" "box"
-        |. num attr "width"  100
-        |. num attr "height" 100
-        |. attr     "fill"   (\(_, _, c) _ -> c)
+voronoi : D3 [D3.Voronoi.Point] [D3.Voronoi.Point]
+voronoi =
+  selectAll "path"
+  |. bind cells
+     |- enter <.> append "path"
      |- update
-        |. attr "x" (\(x, _, _) _ -> show x)
-        |. attr "y" (\(_, y, _) _ -> show y)
-     |- exit
-        |. remove
-
-translate : number -> number -> String
-translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
-
-vis dims margin =
-  svg dims margin
-  |. embed boxes
-
-main : Signal Element
-main = render dims.height dims.width (vis dims margin) <~ Mouse.position
+        |. fun attr "d" (\ps _ -> path ps)
+        |. fun attr "class" (\_ i -> "q" ++ (show ((%) i 9)) ++ "-9")
 ```
 
-It's common practice when using d3 to start building your svg document with an
-initial group child element with a transform attribute to setup margins. Pass
-the `svg` function a `Dimensions` record and a `Margins` record and will return
-a `Selection a` that, when rendered, will do just that.
-
-The `boxes` selection demonstrates how to do data joins in elm-d3. You setup
-your initial selection using `selectAll`, and then method chain a call to
-`bind`, which is like calling `.data()` in JavaScript. `bind`'s first argument
-is a function that will take the data bound to the context and transform it
-into a list values&dmash;in this case tuples of type `(number, number,
-String)`. This list of tuples is joined to the selection. The next three
-arguments are `Selection (number, number, String)`s that are applied to the
-enter, update, and exit selections, respectively.
-
-Since elm is statically typed, you have to cast values manually. For example,
-`attr` will set the value of an attribute on a per-element basis, which means
-you have to pass it a function that will take the data bound to the element as
-well as its index, and produce a string. (All attributes on DOM elements are
-strings, after all.)
+Operations such as `selectAll`, `enter`, and `attr` have the same behavior as
+their D3.js counterparts. The `bind` operation is equivalent to the `data()`
+operator from D3.js, though it requires its argument to be a function.
+Similarly, `attr` also requires a function as its second argument, which takes
+the data bound to the element and the element's index in the selection. Another
+difference is that elm-d3 replaces method chaining with the `|.` operator. For
+example,
 
 ```haskell
-attr : String -> (a -> Int -> String) -> Selection a
+selectAll "path"
+|. bind cells
 ```
 
-If however, you want to set the value of an attribute to a constant number for
-every element in the selection, you can't pass that number directly to `attr`.
-You either have to wrap it in a function:
+is equlivalent to
+
+```javascript
+d3.selectAll("path")
+  .data(cells)
+```
+
+Sequencing is another operation that's slightly different in elm-d3. In Javascript,
+there's a common pattern where you apply a data bound to a selection, assign it
+to a variable, and then apply `enter()`, update, and `exit()` operations to the
+variable. In place of sequencing, you would use the `|-` infix operator. Its
+use is illustrated in the example above. You can see the equivalent code in JavaScript below.
+
+```javascript
+var path = d3.selectAll('path')
+    .bind(function(d) { ... });
+
+path.enter()
+  .append('path');
+
+path
+    .attr('d', function(d) { ... })
+    .attr('class', function(d) { ... });
+```
+
+[core]: https://github.com/mbostock/d3/wiki/Selections
+[voronoi]: https://github.com/seliopou/elm-d3/blob/master/examples/Voronoi.elm
+[voronoi-original]: http://bl.ocks.org/mbostock/4060366
+
+## Rendering
+
+Creating a selection such as `voronoi` above does not actually draw anything to
+the screen. Rather, it defines a computation that the runtime knows how to draw
+to the screen. To do this, you use the `render` function. Its first two
+arguments are the height and width of the drawing area. The third is the `D3 a
+b` that will be renderd. The final argument is the datum of type `a` that will
+be bound to the selection. The result is an `Element` that the Elm runtime
+knows what to do with:
 
 ```haskell
-attr "height" (\_ _ -> 100)
+main : Element
+main = render 800 600 voronoi [{x: 200, y: 200}, {x: 320, y:100}]
 ```
-
-Or you can use the `num` helper function before your application of `attr`
-
-```haskell
-num attr "height" 100
-```
-
-There's also a `str` function that serves a similar purpose, except for string
-constants.
-
-`render` actually draws `Selection a` to the screen. Its first two arguments
-are the height and width of the drawing area. The third is the `Selection a`
-that will be renderd. The final argument is the datum of type `a` that will be
-bound to the selection that will be rendered. In this case, we're getting or
-datum from a signal of mouse positions. Whenever the mouse position updates,
-the Elm runtime will automatically update screen to reflect those changes.
 
 ### Further documentation
 

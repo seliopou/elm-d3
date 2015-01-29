@@ -12,7 +12,7 @@ dims   = { height = size - margin.top - margin.bottom
 type Dimensions = { height : Int, width : Int }
 type Margins = { top : Int, left : Int, right : Int, bottom : Int }
 
-svg : Dimensions -> Margins -> Selection a
+svg : Dimensions -> Margins -> D3 a a
 svg ds ms =
   static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
@@ -22,7 +22,7 @@ svg ds ms =
 
 -- Move the mouse to the left to right to remove or add circles. Move the mouse
 -- up and down to change the brightness of the circles.
-circles : Widget (number, number) number
+circles : D3 (number, number) number
 circles =
   selectAll "circle"
   |= (\(x, y) -> repeat (x // 50) y)
@@ -49,7 +49,7 @@ translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
 vis dims margin =
   svg dims margin
-  |. embed circles
+  |. circles
 
 main : Signal Element
 main = render dims.width dims.height (vis dims margin) <~ Mouse.position

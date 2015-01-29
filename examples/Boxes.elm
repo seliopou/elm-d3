@@ -11,7 +11,7 @@ dims   = { height = size - margin.top - margin.bottom
 type Dimensions = { height : Float, width : Float }
 type Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
-svg : Dimensions -> Margins -> Selection a
+svg : Dimensions -> Margins -> D3 a a
 svg ds ms =
   static "svg"
   |. num attr "height" (ds.height + ms.top + ms.bottom)
@@ -19,7 +19,7 @@ svg ds ms =
   |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
-boxes : Widget (number, number) (number, number, String)
+boxes : D3 (number, number) (number, number, String)
 boxes =
   selectAll ".box"
   |= (\(x, y) -> [(x, 0, "cyan"), (0, y, "magenta")])
@@ -39,7 +39,7 @@ translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
 
 vis dims margin =
   svg dims margin
-  |. embed boxes
+  |. boxes
 
 main : Signal Element
 main = render dims.height dims.width (vis dims margin) <~ Mouse.position
