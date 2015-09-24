@@ -15,15 +15,16 @@
 module Counters where
 
 import Dict
+import Graphics.Element exposing (Element)
 import List
 
-import D3(..)
-import D3.Event(..)
+import D3 exposing (..)
+import D3.Event exposing (..)
 
 -------------------------------------------------------------------------------
 -- The Model
 
-type Model = {
+type alias Model = {
   dict : Dict.Dict Int Int,
   next : Int
 }
@@ -48,7 +49,7 @@ decrement i d =
 -------------------------------------------------------------------------------
 -- The Events
 
-data Event
+type Event
   = Create
   | Increment Int
   | Decrement Int
@@ -90,7 +91,7 @@ counters =
         |- (append "div" <.> str attr "class" "box remove"
            |. html (\_ _ -> "&#10007;")))
      |- update <.> select "div.display"
-        |. text (\(_, d) _ -> show d)
+        |. text (\(_, d) _ -> toString d)
      |- update <.> select "div.increment"
         |. click events (\_ (n, _) _ -> Increment n)
      |- update <.> select "div.decrement"
@@ -119,4 +120,4 @@ controller =
   folde handler initialModel
 
 main : Signal Element
-main = render 800 600 view <~ (controller events)
+main = Signal.map (render 800 600 view) (controller events)

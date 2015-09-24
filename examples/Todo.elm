@@ -19,21 +19,23 @@ module Todo where
 -- Import D3 and dump all its names into the current scope. Also import event
 -- handlers.
 --
-import D3(..)
-import D3.Event(..)
+import D3 exposing (..)
+import D3.Event exposing (..)
 
 -- Import Json to set DOM element properties in the view code. Import String to
 -- use Elm's fast string library. Is this still necessary? I have no idea.
+-- Gotta add Graphics.Element now too, apparently.
 --
-import Json
+import Json.Encode as Json
 import String
+import Graphics.Element exposing (Element)
 
 -- There are some cases in the code below that should never happen and in fact
 -- cannot ever happen. In other languages, you'd use an `asset false`
 -- expression, or `undefined` to indicate that the case is impossible. In Elm,
--- you can call `Native.Error.raise`.
+-- you can call `Debug.crash`.
 --
-import Native.Error
+import Debug
 
 
 -------------------------------------------------------------------------------
@@ -47,7 +49,7 @@ import Native.Error
 -- The Filter data type represents the three different ways that you can filter
 -- items in the Todo list.
 --
-data Filter
+type Filter
   = All         -- * Show all items.
   | Active      -- * Show active (incomplete) items.
   | Completed   -- * Show completed items.
@@ -59,14 +61,14 @@ data Filter
 -- serve not just as a record, but as an authoritative record of the
 -- application state.
 --
-type Model = {
+type alias Model = {
   input : String,               -- * The input for a new task description. Note
                                 -- that this will be kept up-to-date with the
                                 -- content of the <input> element the user
                                 -- interacts with, but this is the authoritative
                                 -- record of that input.
 
-  items : [(String, Bool)],     -- * The items in the Todo list. Each item
+  items : List (String, Bool),  -- * The items in the Todo list. Each item
                                 -- includes a description and a 'status bit'
                                 -- indicating whether the item has been
                                 -- completed (True) or not (False).
@@ -96,7 +98,11 @@ setDescription m i d =
 --
 startEdit : Model -> Int -> Model
 startEdit m i =
-  let description = fst (head (drop i m.items)) in
+  let description =
+    case List.head (List.drop i m.items) of
+      Nothing     -> Debug.crash "assert false"
+      Just (x, _) -> x
+  in
   { m | editing <- Just (description, i) }
 
 -- Change the description of the current edit item to the value `d`.
@@ -104,7 +110,7 @@ startEdit m i =
 changeEdit : Model -> String -> Model
 changeEdit m d =
   case m.editing of
-    Nothing -> Native.Error.raise "trying to edit while not editing"
+    Nothing -> Debug.crash "trying to edit while not editing"
     Just (_, i) -> { m | editing <- Just (d, i) }
 
 -- Complete editing by setting the description of the current edit item to the
@@ -113,7 +119,7 @@ changeEdit m d =
 commitEdit : Model -> Model
 commitEdit m =
   case m.editing of
-    Nothing -> Native.Error.raise "trying to finishing editing while not editing"
+    Nothing -> Debug.crash "trying to finishing editing while not editing"
     Just (t, i) -> let m' = setDescription m i t in { m' | editing <- Nothing }
 
 
@@ -134,7 +140,7 @@ commitEdit m =
 -- These are the high-level events that the Todo application must handle. In
 -- the view code below, you'll map DOM events to this data type.
 --
-data Event
+type Event
   = AddInput            -- * Create a new item out of the current input.
   | ChangeInput String  -- * Update the current input to have the given value.
   | Delete Int          -- * Remove the item from the given index.
@@ -162,7 +168,7 @@ transform e m =
                     , items <- (m.input, False)::m.items }
     ChangeInput i -> { m |  input <- i }
     Filter      f -> { m | filter <- f }
-    Toggle  onoff -> { m |  items <- map (\(d,_) -> (d, onoff)) m.items }
+    Toggle  onoff -> { m |  items <- List.map (\(d,_) -> (d, onoff)) m.items }
     Delete  index -> { m |  items <- ifilter (\_ j -> j /= index) m.items }
     Edit    index -> startEdit  m index
     ChangeEdit  d -> changeEdit m d
@@ -188,7 +194,7 @@ events = stream ()
 -- to get the point across. That is the hope, at least.
 --
 
-type Item = { text : String, completed : Bool, editing : Bool }
+type alias Item = { text : String, completed : Bool, editing : Bool }
 
 -- Turn the model into a list of items to be rendered, taking into account the
 -- Filter mode. The record representing each item includes all the information
@@ -202,7 +208,7 @@ type Item = { text : String, completed : Bool, editing : Bool }
 -- computation turns the Model into something that a computer can draw on the
 -- screen.
 --
-todoList : Model -> [Item]
+todoList : Model -> List Item
 todoList m =
   let display = case m.filter of
     All       -> \_ -> True
@@ -283,7 +289,7 @@ item_view =
   |- static "input"
      |. str attr "class" "toggle"
      |. str attr "type" "checkbox"
-     |. property "checked" (\d i -> Json.Boolean d.completed)
+     |. property "checked" (\d i -> Json.bool d.completed)
      |. click events (\e d i -> if d.completed then Uncheck i else Check i)
   |- static "label"
      |. text (\d _ -> d.text)
@@ -299,7 +305,7 @@ item_edit : D3 Item Item
 item_edit =
   static "input"
   |. str attr "class" "edit"
-  |. property "value" (\d i -> Json.String d.text)
+  |. property "value" (\d i -> Json.string d.text)
   |. input events (\e d i -> ChangeEdit e)
   |. keyup events (\e d i ->
        case e.keyCode of
@@ -381,7 +387,7 @@ content =
        |. str attr "id" "new-todo"
        |. str attr "autofocus" ""
        |. str attr "placeholder" "What needs to be done?"
-       |. property "value" (\d _ -> Json.String d.input)
+       |. property "value" (\d _ -> Json.string d.input)
        |. input events (\v d i -> ChangeInput v)
        |. keyup events (\k d i ->
             if k.keyCode == 13 && d.input /= ""
@@ -405,8 +411,8 @@ footer =
     static "span"
     |. str attr "id" "todo-count"
     |. html (\m _ ->
-      let undone_count = length (filter (\(_, b) -> not b) m.items) in
-      "<strong>" ++ (show undone_count) ++ "</strong> items left")
+      let undone_count = List.length (List.filter (\(_, b) -> not b) m.items) in
+      "<strong>" ++ (toString undone_count) ++ "</strong> items left")
   in
   let filters =
     selectAll "li"
@@ -416,7 +422,7 @@ footer =
               ])
        |- enter <.> append "li" <.> append "a"
           |. fun attr "href" (\(_, _, href) _ -> href)
-          |. text (\(f, _, _) _ -> show f)
+          |. text (\(f, _, _) _ -> toString f)
           |. click events (\_ (f, _, _) _ -> Filter f)
        |- update <.> select "a"
           |. classed "selected" (\(_, active, _) _ -> active)
@@ -479,7 +485,7 @@ controller =
 -- cause the view to be rerendered every time the Model changes.
 --
 main : Signal Element
-main = render 800 600 view <~ (controller events)
+main = Signal.map (render 800 600 view) (controller events)
 
 
 -------------------------------------------------------------------------------

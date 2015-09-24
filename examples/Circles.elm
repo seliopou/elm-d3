@@ -1,16 +1,18 @@
 module Circles where
 
-import D3(..)
-import D3.Color 
+import Graphics.Element exposing (Element)
 import Mouse
+
+import D3 exposing (..)
+import D3.Color
 
 size   = 375
 margin = { top = 25, left = 25, right = 25, bottom = 25 }
 dims   = { height = size - margin.top - margin.bottom
          , width  = size - margin.left - margin.right }
 
-type Dimensions = { height : Int, width : Int }
-type Margins = { top : Int, left : Int, right : Int, bottom : Int }
+type alias Dimensions = { height : Int, width : Int }
+type alias Margins = { top : Int, left : Int, right : Int, bottom : Int }
 
 svg : Dimensions -> Margins -> D3 a a
 svg ds ms =
@@ -25,12 +27,12 @@ svg ds ms =
 circles : D3 (number, number) number
 circles =
   selectAll "circle"
-  |= (\(x, y) -> repeat (x // 50) y)
+  |= (\(x, y) -> List.repeat (x // 50) y)
      |- enter <.> append "circle"
         |. fun attr "fill" color
         |. num attr "r"    0
         |. num attr "cy"   150
-        |. fun attr "cx"   (\_ i -> show (25 + 50 * i))
+        |. fun attr "cx"   (\_ i -> toString (25 + 50 * i))
         |. transition
            |. num attr "r" 25
      |- update
@@ -45,11 +47,11 @@ color y i =
     in D3.Color.toString (D3.Color.darker magnitude steelBlue)
 
 translate : number -> number -> String
-translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
+translate x y = "translate(" ++ (toString x) ++ "," ++ (toString y) ++ ")"
 
 vis dims margin =
   svg dims margin
   |. circles
 
 main : Signal Element
-main = render dims.width dims.height (vis dims margin) <~ Mouse.position
+main = Signal.map (render dims.width dims.height (vis dims margin)) Mouse.position
