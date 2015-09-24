@@ -1,3 +1,4 @@
+Elm.Native.D3 = Elm.Native.D3 || {};
 Elm.Native.D3.Render = {};
 Elm.Native.D3.Render.make = function(elm) {
   'use strict';
@@ -7,11 +8,11 @@ Elm.Native.D3.Render.make = function(elm) {
   elm.Native.D3.Render = elm.Native.D3.Render || {};
   if (elm.Native.D3.Render.values) return elm.Native.D3.Render.values;
 
-  var newElement = Elm.Graphics.Element.make(elm).newElement;
+  var newElement = Elm.Native.Graphics.Element.make(elm).newElement;
 
   function run(k) {
     return function(selection) {
-      return k(id, selection);
+      return k(function(x) { return x; }, selection);
     };
   }
 

@@ -1,3 +1,4 @@
+Elm.Native.D3 = Elm.Native.D3 || {};
 Elm.Native.D3.Scale = {};
 Elm.Native.D3.Scale.make = function (elm) {
     'use strict';

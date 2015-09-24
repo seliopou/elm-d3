@@ -42,6 +42,14 @@ import Native.D3.Render
 import Native.D3.Selection
 import Native.D3.Transition
 
+-- These modules are not used directly but are required to be referenced from
+-- some elm source code so that they're actually linked during compile time...
+-- since there's not really a distinction between linking and compiling any
+-- more, as far as I can tell.
+--
+import Native.D3.JavaScript
+import Native.D3.Util
+
 type D3 a b = D3
 
 
