@@ -33,14 +33,16 @@ module D3
   , duration            -- : (a -> Int -> Int) -> D3 a a
   ) where
 
-import Json(..)
+
+import Graphics.Element exposing (Element)
+import Json.Encode exposing (Value)
 import String
 
 import Native.D3.Render
 import Native.D3.Selection
 import Native.D3.Transition
 
-data D3 a b = D3
+type D3 a b = D3
 
 
 version : String
@@ -176,13 +178,13 @@ remove = Native.D3.Selection.remove
 --
 --   function(p) { return p.s().bind(f); }
 --
-bind : (a -> [b]) -> D3 a b
+bind : (a -> List b) -> D3 a b
 bind f = Native.D3.Selection.bind f
 
 -- Infix operator alias for bind.
 --
 infixl 6 |=
-(|=) : D3 a b -> (b -> [c]) -> D3 a c
+(|=) : D3 a b -> (b -> List c) -> D3 a c
 (|=) s f = s <.> bind f
 
 -- Create an enter selection.
@@ -299,7 +301,7 @@ num : (String -> (a -> Int -> String) -> D3 a a)
     -> String
     -> number
     -> D3 a a
-num a name v = a name (\_ _ -> (show v))
+num a name v = a name (\_ _ -> (toString v))
 
 -- String casting helper for attr and similar functions.
 --

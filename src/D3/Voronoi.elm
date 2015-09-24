@@ -7,10 +7,10 @@ module D3.Voronoi
 import Native.D3.Voronoi
 import String
 
-type Point = { x : Float, y : Float }
+type alias Point = { x : Float, y : Float }
 
-cells : [Point] -> [[Point]]
+cells : List Point -> List (List Point)
 cells = Native.D3.Voronoi.cells
 
-cellsWithClipping : Float -> Float -> Float -> Float -> [Point] -> [[Point]]
+cellsWithClipping : Float -> Float -> Float -> Float -> List Point -> List (List Point)
 cellsWithClipping = Native.D3.Voronoi.cellsWithClipping
