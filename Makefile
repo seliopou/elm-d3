@@ -11,7 +11,7 @@ GENERATED_FILES = \
 all: $(GENERATED_FILES)
 
 build/%.js: %.elm
-	elm --src-dir=src --make -o $?
+	./node_modules/.bin/elm-make -o $?
 
 elm-d3.js: elm-d3.runtime.js elm-d3.library.js
 	@rm -f $@
