@@ -1,5 +1,4 @@
-import "../cast";
-
+Elm.Native.D3 = Elm.Native.D3 || {};
 Elm.Native.D3.Event = {};
 Elm.Native.D3.Event.make = function(elm) {
   'use strict';
@@ -11,6 +10,8 @@ Elm.Native.D3.Event.make = function(elm) {
   if (elm.Native.D3.Event.values) return elm.Native.D3.Event.values;
 
   var JS = Elm.Native.D3.JavaScript.make(elm);
+  var Util = Elm.Native.D3.Util.make(elm);
+  var safeIndexed = Util.__native__.safeIndexed;
 
   function mouse_event() {
     return JS.toRecord({

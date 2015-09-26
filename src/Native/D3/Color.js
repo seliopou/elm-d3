@@ -1,3 +1,4 @@
+Elm.Native.D3 = Elm.Native.D3 || {};
 Elm.Native.D3.Color = {};
 Elm.Native.D3.Color.make = function(elm) {
   'use strict';
@@ -7,35 +8,28 @@ Elm.Native.D3.Color.make = function(elm) {
   elm.Native.D3.Color = elm.Native.D3.Color || {};
   if (elm.Native.D3.Color.values) return elm.Native.D3.Color.values;
 
-  var JS = Elm.Native.D3.JavaScript.make(elm);
-
-
   function elm_create(typ, a, b, c) {
-    return d3[typ](JS.fromInt(a), JS.fromInt(b), JS.fromInt(c));
+    return d3[typ](a, b, c);
   }
 
   function elm_convert(typ, color) {
-    var c = typeof color[typ] == 'function' ? color[typ]() : d3[typ](color),
-        o = {};
-
-    for (var i in typ) o[typ[i]] = c[i];
-    return JS.toRecord(o);
+    return typeof color[typ] == 'function' ? color[typ]() : d3[typ](color),
   }
 
   function elm_fromString(str) {
-    return d3.rgb(JS.fromString(str));
+    return d3.rgb(str);
   }
 
   function elm_toString(color) {
-    return JS.toString(color.toString());
+    return color.toString();
   }
 
   function elm_brighter(amount, color) {
-    return color.brighter(JS.fromFloat(amount));
+    return color.brighter(amount);
   }
 
   function elm_darker(amount, color) {
-    return color.darker(JS.fromFloat(amount));
+    return color.darker(amount);
   }
 
   return elm.Native.D3.Color.values = {

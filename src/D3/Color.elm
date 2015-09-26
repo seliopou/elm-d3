@@ -15,7 +15,7 @@ module D3.Color
 
 import Native.D3.Color
 
-data Color = Color
+type Color = Color
 
 
 fromRGB : Int -> Int -> Int -> Color

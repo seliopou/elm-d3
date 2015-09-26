@@ -11,33 +11,32 @@ basis for the library, as well as an alternative renderer for Elm.
 
 First make sure that you have [node.js][node] installed, as well as the
 [Elm][elm] compiler. Once you've installed those dependencies, clone the elm-d3
-repository and run the following commands from the root directory:
+repository and run the following command from the root directory:
 
-    npm install smash
-    make
+    elm-make
 
-This will locally install the [smash][] utility and build three files in the
-root directory of the elm-d3 repository. They'll come in handy later.
+This will locally install the [smash][] utility and build the library.
 
 [node]: http://nodejs.org/
 [elm]: https://github.com/evancz/elm
 [smash]: https://github.com/mbostock/smash
 
-* `elm-d3.library.js`: contains all compiled code;
-* `elm-d3.runtime.js`: contains supporting, non-compiled JavaScript code;
-  and
-* `elm-d3.js`: the previous two files, concatenated.
-
 To get an example compiled and running in your browser, use the following
-commands:
+command:
 
-    elm --make --src-dir=src `./scripts/build-flags` examples/Circles.elm
-    open build/examples/Circles.html
+    elm-make examples/Circles.elm --output circles.html
+
+You must then edit the HTML file and add a `<script>` tag that will load the
+D3.js library. (Unfortunately, it is no longer possible to control linking of
+external JavaScript code using the Elm compiler, so this manual step is
+necessary.) Then, load it up on your browser:
+
+    open build/examples/circles.html
 
 If you're not using OS X, the last command won't work. In that case open
-`build/examples/Circles.html` however you normally would in your operating
-system. Once the page is open, move your mouse left and right to add and remove
-circles, and move your mouse up and down to change their brightness.
+`circles.html` however you normally would in your operating system. Once the
+page is open, move your mouse left and right to add and remove circles, and
+move your mouse up and down to change their brightness.
 
 ## Conceptual Prerequisites
 

@@ -1,3 +1,4 @@
+Elm.Native.D3 = Elm.Native.D3 || {};
 Elm.Native.D3.Voronoi = {};
 Elm.Native.D3.Voronoi.make = function(elm) {
   'use strict';

@@ -5,25 +5,31 @@
 -- To build this app, from the root directory of the elm-d3 project, compile it
 -- using the following commands:
 --
---   make
---   elm --make --src-dir=src `./scripts/build-flags` `./scripts/include-css examples/counters.css` examples/Counters.elm
+--   elm-make examples/Counters.elm --output counters.html
 --
--- On OS X, you can then open the file in the browser using the following command:
+-- On OS X, you can then open the file in the browser using the following
+-- command:
 --
 --   open build/examples/Counters.html
+--
+-- Note that due to recent changes in the Elm compiler, it is no longer
+-- possible to linking of external JavaScript code while building projects. So,
+-- you will have to manually link D3.js into this HTML file, as well as the
+-- counters.css stylesheet, which you can find in the examples/ directory.
 --
 module Counters where
 
 import Dict
+import Graphics.Element exposing (Element)
 import List
 
-import D3(..)
-import D3.Event(..)
+import D3 exposing (..)
+import D3.Event exposing (..)
 
 -------------------------------------------------------------------------------
 -- The Model
 
-type Model = {
+type alias Model = {
   dict : Dict.Dict Int Int,
   next : Int
 }
@@ -48,7 +54,7 @@ decrement i d =
 -------------------------------------------------------------------------------
 -- The Events
 
-data Event
+type Event
   = Create
   | Increment Int
   | Decrement Int
@@ -90,7 +96,7 @@ counters =
         |- (append "div" <.> str attr "class" "box remove"
            |. html (\_ _ -> "&#10007;")))
      |- update <.> select "div.display"
-        |. text (\(_, d) _ -> show d)
+        |. text (\(_, d) _ -> toString d)
      |- update <.> select "div.increment"
         |. click events (\_ (n, _) _ -> Increment n)
      |- update <.> select "div.decrement"
@@ -119,4 +125,4 @@ controller =
   folde handler initialModel
 
 main : Signal Element
-main = render 800 600 view <~ (controller events)
+main = Signal.map (render 800 600 view) (controller events)

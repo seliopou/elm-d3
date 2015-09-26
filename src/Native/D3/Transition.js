@@ -1,5 +1,4 @@
-import "../cast"
-
+Elm.Native.D3 = Elm.Native.D3 || {};
 Elm.Native.D3.Transition = {};
 Elm.Native.D3.Transition.make = function(elm) {
   'use strict';
@@ -10,7 +9,8 @@ Elm.Native.D3.Transition.make = function(elm) {
   if (elm.Native.D3.Transition.values) return elm.Native.D3.Transition.values;
 
   var JS = Elm.Native.D3.JavaScript.make(elm);
-
+  var Util = Elm.Native.D3.Util.make(elm);
+  var safeIndexed = Util.__native__.safeIndexed;
 
   function safeTransition(fn) {
     return function (a, i) {

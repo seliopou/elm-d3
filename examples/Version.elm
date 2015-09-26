@@ -1,5 +1,6 @@
 module Version where
 
 import D3
+import Graphics.Element exposing (show)
 
-main = asText D3.version
+main = show D3.version

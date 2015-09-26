@@ -1,5 +1,9 @@
 module D3.Event
-  ( stream  -- : () -> Stream e
+  ( Stream
+  , KeyboardEvent
+  , MouseEvent
+  , InputEvent
+  , stream  -- : () -> Stream e
   , folde   -- : (e -> b -> b) -> b -> Stream e -> Signal b
 
   , click       -- : MouseHandler e a
@@ -20,24 +24,46 @@ module D3.Event
 
   , focus       -- : BasicHandler e a
   , blur        -- : BasicHandler e a
-  , Stream
   ) where
 
-import D3(..)
+{-| Event handlers
+
+# Types
+@docs Stream, MouseEvent, KeyboardEvent, InputEvent
+
+# Operators
+@docs stream, folde
+
+# Mouse Events
+@docs click, dblclick, mousedown, mouseenter, mouseleave, mousemove, mouseout, mouseover, mouseup
+
+# Keyboard Events
+@docs keyup, keydown, keypress
+
+# Other Events
+@docs input, focus, blur
+-}
+
+import D3 exposing (..)
 import Native.D3.Event
 import Signal
 import String
 
 
-data Event e
+type Event e
   = Start
   | Event e
 
-type Stream e = Signal (Event e)
+{-| An event stream. Event handlers exported by this module take this sort of
+stream and inject events into it. -}
+type alias Stream e = Signal (Event e)
 
+{-| Create a new `Stream`. Note that this is an effectful operation. -}
 stream : () -> Stream e
 stream () = Signal.constant Start
 
+{-| This is the equivalent of `Signal.foldp`, except over streams. The
+difference between the two is that `folde` requires a default value. -}
 folde : (e -> b -> b) -> b -> Stream e -> Signal b
 folde f m =
   let g e n =
@@ -45,13 +71,14 @@ folde f m =
       -- N.B. the start event will reset the accumulator to the initial value.
       Start -> m
       Event e -> f e n
-    in foldp g m
+    in Signal.foldp g m
 
 
 -- Mouse event datatypes and handlers
 --
 
-type MouseEvent = {
+{-|-}
+type alias MouseEvent = {
   altKey : Bool,
   button : Int,
   ctrlKey : Bool,
@@ -59,42 +86,53 @@ type MouseEvent = {
   shiftKey : Bool
 }
 
-type MouseHandler e a = Stream e -> (MouseEvent -> a -> Int -> e) -> D3 a a
+type alias MouseHandler e a = Stream e -> (MouseEvent -> a -> Int -> e) -> D3 a a
 
+{-|-}
 handleMouse : String -> MouseHandler e a
 handleMouse e s f = Native.D3.Event.handleMouse e s (\m a i -> Event (f m a i))
 
+{-|-}
 click : MouseHandler e a
 click = handleMouse "click"
 
+{-|-}
 dblclick : MouseHandler e a
 dblclick = handleMouse "dblclick"
 
+{-|-}
 mousedown : MouseHandler e a
 mousedown = handleMouse "mousedown"
 
+{-|-}
 mouseenter : MouseHandler e a
 mouseenter = handleMouse "mouseenter"
 
+{-|-}
 mouseleave : MouseHandler e a
 mouseleave = handleMouse "mouseleave"
 
+{-|-}
 mousemove : MouseHandler e a
 mousemove = handleMouse "mousemove"
 
+{-|-}
 mouseout : MouseHandler e a
 mouseout = handleMouse "mouseout"
 
+{-|-}
 mouseover : MouseHandler e a
 mouseover = handleMouse "mouseover"
 
+{-|-}
 mouseup : MouseHandler e a
 mouseup = handleMouse "mouseup"
 
 -- Keyboard event datatypes and handlers
 --
 
-type KeyboardEvent = {
+{-|-}
+type alias KeyboardEvent = {
   altKey : Bool,
   keyCode : Int,
   ctrlKey : Bool,
@@ -102,17 +140,21 @@ type KeyboardEvent = {
   shiftKey : Bool
 }
 
-type KeyboardHandler e a = Stream e -> (KeyboardEvent -> a -> Int -> e) -> D3 a a
+type alias KeyboardHandler e a = Stream e -> (KeyboardEvent -> a -> Int -> e) -> D3 a a
 
+{-|-}
 handleKeyboard : String -> KeyboardHandler e a
 handleKeyboard e s f = Native.D3.Event.handleKeyboard e s (\m a i -> Event (f m a i))
 
+{-|-}
 keyup : KeyboardHandler e a
 keyup = handleKeyboard "keyup"
 
+{-|-}
 keydown : KeyboardHandler e a
 keydown = handleKeyboard "keydown"
 
+{-|-}
 keypress : KeyboardHandler e a
 keypress = handleKeyboard "keypress"
 
@@ -120,20 +162,24 @@ keypress = handleKeyboard "keypress"
 -- Input event datatypes and handlers
 --
 
-type InputEvent = String
+{-|-}
+type alias InputEvent = String
 
-type InputHandler e a = Stream e -> (InputEvent -> a -> Int -> e) -> D3 a a
+type alias InputHandler e a = Stream e -> (InputEvent -> a -> Int -> e) -> D3 a a
 
+{-|-}
 input : InputHandler e a
-input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i ))
+input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i))
 
 -- Focus/Blur handlers
 --
 
-type BasicHandler e a = Stream e -> (a -> Int -> e) -> D3 a a
+type alias BasicHandler e a = Stream e -> (a -> Int -> e) -> D3 a a
 
+{-|-}
 focus : BasicHandler e a
 focus s f = Native.D3.Event.handleFocus s (\a i -> Event (f a i))
 
+{-|-}
 blur : BasicHandler e a
 blur s f = Native.D3.Event.handleBlur s (\a i -> Event (f a i))

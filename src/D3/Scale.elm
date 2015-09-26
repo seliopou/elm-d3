@@ -14,32 +14,27 @@ from the Reals and map it to the Reals
 import Native.D3.Scale
 
 
-data Scale a = Scale
+type Scale a = Scale
 
 
-{-| Make a linear scale. Nothing fancy here. The default is the identity mapping.
--}
+{-| Make a linear scale. Nothing fancy here. The default is the identity mapping.  -}
 linear : Scale Float
 linear = Native.D3.Scale.linear
 
 identity : Scale Float
 identity = Native.D3.Scale.identity
 
-{-| Make a sqrt scale.
--}
+{-| Make a sqrt scale. -}
 sqrt : Scale Float
 sqrt = Native.D3.Scale.sqrt
 
-{-| Make a power scale. You must specify the exponent.
--}
+{-| Make a power scale. You must specify the exponent. -}
 pow : Float -> Scale Float
 pow = Native.D3.Scale.pow
 
-{-| Make a log scale. You must specify the base.
--}
+{-| Make a log scale. You must specify the base. -}
 log : Float -> Scale Float
 log = Native.D3.Scale.log
-
 
 
 {-| Change the domain of the function. You may pass in any number of values into
@@ -47,13 +42,12 @@ the list and they will be interpolated between.
 
       yScale = linear |> domain [0,100] |> range [-150,150]
 -}
-domain : [Float] -> Scale a -> Scale a
+domain : List Float -> Scale a -> Scale a
 domain = Native.D3.Scale.domain
 
 {-| Change the range of the function. You may pass in any number of values into
-the list and they will be interpolated between.
--}
-range : [a] -> Scale a -> Scale a
+the list and they will be interpolated between. -}
+range : List Float -> Scale a -> Scale a
 range = Native.D3.Scale.range
 
 {-| Extend the domain to start and end on "nice" values.
@@ -91,5 +85,5 @@ invert = Native.D3.Scale.invert
 
       ticks (linear |> domain [0,10]) 3 == [0, 5, 10]
 -}
-ticks : Scale Float -> Int ->  [Float]
+ticks : Scale Float -> Int -> List Float
 ticks = Native.D3.Scale.ticks
