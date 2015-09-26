@@ -5,12 +5,17 @@
 -- To build this app, from the root directory of the elm-d3 project, compile it
 -- using the following commands:
 --
---   make
---   elm --make --src-dir=src `./scripts/build-flags` `./scripts/include-css examples/counters.css` examples/Counters.elm
+--   elm-make examples/Counters.elm --output counters.html
 --
--- On OS X, you can then open the file in the browser using the following command:
+-- On OS X, you can then open the file in the browser using the following
+-- command:
 --
 --   open build/examples/Counters.html
+--
+-- Note that due to recent changes in the Elm compiler, it is no longer
+-- possible to linking of external JavaScript code while building projects. So,
+-- you will have to manually link D3.js into this HTML file, as well as the
+-- counters.css stylesheet, which you can find in the examples/ directory.
 --
 module Counters where
 
