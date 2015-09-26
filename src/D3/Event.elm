@@ -56,22 +56,22 @@ type Event e
 
 {-| An event stream. Event handlers exported by this module take this sort of
 stream and inject events into it. -}
-type Stream e = Stream (Signal (Event e))
+type alias Stream e = Signal (Event e)
 
 {-| Create a new `Stream`. Note that this is an effectful operation. -}
 stream : () -> Stream e
-stream () = Stream (Signal.constant Start)
+stream () = Signal.constant Start
 
 {-| This is the equivalent of `Signal.foldp`, except over streams. The
 difference between the two is that `folde` requires a default value. -}
 folde : (e -> b -> b) -> b -> Stream e -> Signal b
-folde f m (Stream signal) =
+folde f m =
   let g e n =
     case e of
       -- N.B. the start event will reset the accumulator to the initial value.
       Start -> m
       Event e -> f e n
-    in Signal.foldp g m signal
+    in Signal.foldp g m
 
 
 -- Mouse event datatypes and handlers
@@ -169,7 +169,7 @@ type alias InputHandler e a = Stream e -> (InputEvent -> a -> Int -> e) -> D3 a 
 
 {-|-}
 input : InputHandler e a
-input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i ))
+input s f = Native.D3.Event.handleInput s (\m a i -> Event (f m a i))
 
 -- Focus/Blur handlers
 --
