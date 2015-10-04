@@ -13,7 +13,7 @@ Elm.Native.D3.Color.make = function(elm) {
   }
 
   function elm_convert(typ, color) {
-    return typeof color[typ] == 'function' ? color[typ]() : d3[typ](color),
+    return typeof color[typ] == 'function' ? color[typ]() : d3[typ](color);
   }
 
   function elm_fromString(str) {
