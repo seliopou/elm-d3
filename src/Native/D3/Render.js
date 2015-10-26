@@ -32,7 +32,7 @@ Elm.Native.D3.Render.make = function(elm) {
         .datum(_new.datum)
         .call(run(_new.selection));
 
-    return true;
+    return node;
   }
 
   function render_selection(width, height, selection, datum) {

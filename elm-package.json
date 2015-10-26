@@ -1,5 +1,5 @@
 {
-    "version": "0.4.0",
+    "version": "0.4.2",
     "summary": "elm bindings for D3.js",
     "repository": "https://github.com/seliopou/elm-d3.git",
     "license": "BSD3",
