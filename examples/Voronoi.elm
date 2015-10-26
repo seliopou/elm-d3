@@ -23,19 +23,24 @@ module Voronoi where
 -- Import D3 and dump all its names into the current scope. Also import Voronoi
 -- diagram-related operations, but keep those names qualified.
 --
-import D3(..)
+import D3 exposing (..)
 import D3.Voronoi
 
 -- Import Mouse to access the mouse's position. Also import Random and dump its
 -- names into the current scope.
 --
 import Mouse
-import Random(..)
+import Random exposing (..)
+import String
+import Time exposing (inMilliseconds, timestamp)
+
+import Graphics.Element exposing (Element)
+import Signal exposing ((<~), (~), constant)
 
 -- Type declaractions for records that represent dimensions and margins.
 --
-type Dimensions = { height : Float, width : Float }
-type Margins = { top : Float, left : Float, right : Float, bottom : Float }
+type alias Dimensions = { height : Float, width : Float }
+type alias Margins = { top : Float, left : Float, right : Float, bottom : Float }
 
 
 width = 960
@@ -58,49 +63,62 @@ svg ds ms =
   |. static "g"
      |. str attr "transform" (translate margin.left margin.top)
 
-circles : D3 [D3.Voronoi.Point] D3.Voronoi.Point
+circles : D3 (List D3.Voronoi.Point) D3.Voronoi.Point
 circles =
   selectAll "circle"
-  |= tail
+  |= (List.drop 1)
      |- enter <.> append "circle"
         |. num attr "r" 1.5
         |. str attr "fill" "black"
      |- update
-        |. fun attr "cx" (\p _ -> show p.x)
-        |. fun attr "cy" (\p _ -> show p.y)
+        |. fun attr "cx" (\p _ -> toString p.x)
+        |. fun attr "cy" (\p _ -> toString p.y)
 
-voronoi : D3 [D3.Voronoi.Point] [D3.Voronoi.Point]
+voronoi : D3 (List D3.Voronoi.Point) (List D3.Voronoi.Point)
 voronoi =
   selectAll "path"
   |. bind cells
      |- enter <.> append "path"
      |- update
         |. fun attr "d" (\ps _ -> path ps)
-        |. fun attr "class" (\_ i -> "q" ++ (show ((%) i 9)) ++ "-9")
+        |. fun attr "class" (\_ i -> "q" ++ (toString ((%) i 9)) ++ "-9")
 
-cells : [D3.Voronoi.Point] -> [[D3.Voronoi.Point]]
+cells : List D3.Voronoi.Point -> List (List D3.Voronoi.Point)
 cells = D3.Voronoi.cellsWithClipping margin.right margin.top dims.width dims.height
 
 -- Helper function for creating an SVG path string for the given polygon.
 --
-path : [D3.Voronoi.Point] -> String
+path : List D3.Voronoi.Point -> String
 path ps =
-  let pair p = (show p.x) ++ "," ++ (show p.y)
-    in "M" ++ (join "L" (map pair ps)) ++ "Z"
+  let pair p = (toString p.x) ++ "," ++ (toString p.y)
+    in "M" ++ (String.join "L" (List.map pair ps)) ++ "Z"
 
 -- Helper function for creating an SVG transformation string that represents a
 -- translation.
 --
 translate : number -> number -> String
-translate x y = "translate(" ++ (show x) ++ "," ++ (show y) ++ ")"
+translate x y = "translate(" ++ (toString x) ++ "," ++ (toString y) ++ ")"
 
 -- Generates a list of random points of the given length. The list is returned
 -- as a Signal, thought the signal will never take on any other value.
 --
-randomPoints : Int -> Signal [D3.Voronoi.Point]
-randomPoints n =
-  let mk_point x y = { x = x * dims.width , y = y * dims.height } in
-    zipWith mk_point <~ (floatList (constant n)) ~ (floatList (constant n))
+genPoints : Int -> Generator (List D3.Voronoi.Point)
+genPoints n =
+  let points =
+    customGenerator <| \seed ->
+      let (x, seed') = generate (float 0 dims.width ) seed in
+      let (y, seed'') = generate (float 0 dims.height) seed' in
+      ({ x = x, y = y }, seed'')
+  in
+  list n points
+
+genPoints' : Int -> Seed -> List D3.Voronoi.Point
+genPoints' n s = fst (generate (genPoints n) s)
+
+-- Hoops to get a random seed.
+--
+seed : Signal Seed
+seed = (\(time, _) -> initialSeed (floor (inMilliseconds time))) <~ (timestamp (constant ()))
 
 vis dims margin =
   svg dims margin
@@ -110,5 +128,7 @@ vis dims margin =
 main : Signal Element
 main =
   let mouse (x, y) = { x = (toFloat x) - margin.left, y = (toFloat y) - margin.top }
-      points = (\m ps -> mouse m :: ps) <~ Mouse.position ~ (randomPoints 100)
-    in render dims.width dims.height (vis dims margin) <~ points
+      randomPoints = genPoints' 100 <~ seed
+      points = (\m ps -> mouse m :: ps) <~ Mouse.position ~ randomPoints
+  in
+  render dims.width dims.height (vis dims margin) <~ points
