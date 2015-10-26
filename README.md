@@ -43,7 +43,7 @@ move your mouse up and down to change their brightness.
 In order to effectively use elm-d3, you should be familiar with the core
 concepts of D3.js, including data joins, nested selections, and reusable
 charts. The following series of blog posts by [@mbostock][] introduce these
-concepts quite nicely, and independently of elm-d3 should be ready by anbody
+concepts quite nicely, and independently of elm-d3 should be read by anbody
 that is interested developing their D3.js skills:
 
 * [Thinking in Joins][join]
