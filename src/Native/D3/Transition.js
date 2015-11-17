@@ -10,7 +10,9 @@ Elm.Native.D3.Transition.make = function(elm) {
 
   var JS = Elm.Native.D3.JavaScript.make(elm);
   var Util = Elm.Native.D3.Util.make(elm);
-  var safeIndexed = Util.__native__.safeIndexed;
+  var safeIndexed = Util.__native__.safeIndexed,
+      safeValfn   = Util.__native__.safeValfn;
+
 
   function safeTransition(fn) {
     return function (a, i) {
