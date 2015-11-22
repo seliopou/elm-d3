@@ -57,7 +57,7 @@ range = Native.D3.Scale.range
 nice : Scale Float -> Scale Float
 nice = Native.D3.Scale.nice
 
-{-| Clamp the domain so that values beyond the domain will be brough back to the
+{-| Clamp the domain so that values beyond the domain will be brought back to the
 most extreme value specified in the domain.
 
       linear |> clamp True |> convert 3 == 1

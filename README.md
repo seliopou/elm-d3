@@ -1,6 +1,6 @@
 # elm-d3
 
-elm-d3 provides [Elm][elm] bindings for [d3.js][d3]. It enables you create
+elm-d3 provides [Elm][elm] bindings for [d3.js][d3]. It enables you to create
 type-safe, composable widgets using HTML, SVG, and CSS. D3 acts as a conceptual
 basis for the library, as well as an alternative renderer for Elm.
 
@@ -43,8 +43,8 @@ move your mouse up and down to change their brightness.
 In order to effectively use elm-d3, you should be familiar with the core
 concepts of D3.js, including data joins, nested selections, and reusable
 charts. The following series of blog posts by [@mbostock][] introduce these
-concepts quite nicely, and independently of elm-d3 should be read by anbody
-that is interested developing their D3.js skills:
+concepts quite nicely, and independently of elm-d3 should be read by anybody
+that is interested in developing their D3.js skills:
 
 * [Thinking in Joins][join]
 * [Nested Selections][nest]
@@ -64,7 +64,7 @@ fairly straightforward to port over to elm-d3. For example, here's a fragment
 of code taken from the [Voronoi Diagram example][voronoi] ([original D3.js
 version][voronoi-original]):
 
-```haskell
+```elm
 voronoi : D3 [D3.Voronoi.Point] [D3.Voronoi.Point]
 voronoi =
   selectAll "path"
@@ -83,12 +83,12 @@ the data bound to the element and the element's index in the selection. Another
 difference is that elm-d3 replaces method chaining with the `|.` operator. For
 example,
 
-```haskell
+```elm
 selectAll "path"
 |. bind cells
 ```
 
-is equlivalent to
+is equivalent to
 
 ```javascript
 d3.selectAll("path")
@@ -123,11 +123,11 @@ Creating a selection such as `voronoi` above does not actually draw anything to
 the screen. Rather, it defines a computation that the runtime knows how to draw
 to the screen. To do this, you use the `render` function. Its first two
 arguments are the height and width of the drawing area. The third is the `D3 a
-b` that will be renderd. The final argument is the datum of type `a` that will
+b` that will be rendered. The final argument is the datum of type `a` that will
 be bound to the selection. The result is an `Element` that the Elm runtime
 knows what to do with:
 
-```haskell
+```elm
 main : Element
 main = render 800 600 voronoi [{x: 200, y: 200}, {x: 320, y:100}]
 ```
