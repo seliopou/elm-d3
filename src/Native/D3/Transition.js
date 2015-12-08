@@ -32,7 +32,7 @@ Elm.Native.D3.Transition.make = function(elm) {
   }
 
   function elm_duration(valfn) {
-    valfn = safeValfn(valfn);
+    valfn = safeValfn(valfn, safeTransition);
     return function(k, selection, i) {
       return k(selection.duration(safeIndexed(i, valfn)), i);
     };
