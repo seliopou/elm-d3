@@ -18,7 +18,7 @@
 -- you will have to manually link D3.js into this HTML file, as well as the
 -- voronoi.css stylesheet, which you can find in the examples/ directory.
 --
-module Voronoi where
+module Voronoi exposing (..)
 
 -- Import D3 and dump all its names into the current scope. Also import Voronoi
 -- diagram-related operations, but keep those names qualified.

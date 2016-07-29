@@ -1,4 +1,4 @@
-module Version where
+module Version exposing (..)
 
 import D3
 import Graphics.Element exposing (show)

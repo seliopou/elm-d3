@@ -1,8 +1,7 @@
-module Boxes where
+module Boxes exposing (..)
 
 import D3 exposing (..)
-import Graphics.Element exposing (Element)
-import Mouse
+import Element exposing (Element)
 
 size   = 300
 margin = { top = 10, left = 10, right = 10, bottom = 10 }
@@ -42,5 +41,4 @@ vis dims margin =
   svg dims margin
   |. boxes
 
-main : Signal Element
-main = Signal.map (render dims.height dims.width (vis dims margin)) Mouse.position
+main = render dims.height dims.width (vis dims margin) (0, 0)

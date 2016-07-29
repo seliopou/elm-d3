@@ -1,4 +1,4 @@
-module Clicks where
+module Clicks exposing (..)
 
 import String
 import Graphics.Element exposing (Element)

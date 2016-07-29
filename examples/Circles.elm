@@ -1,4 +1,4 @@
-module Circles where
+module Circles exposing (..)
 
 import Graphics.Element exposing (Element)
 import Mouse
