@@ -3,6 +3,7 @@
 build/
 cache/
 node_modules/
+elm-stuff/
 elm-d3.js
 elm-d3.runtime.js
 elm-d3.library.js
